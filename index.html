@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+<title>Shaker</title>
+<meta name="description" content="Générateur de séances de musculation équilibrées : à secouer ou à checker.">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png">
+<link rel="shortcut icon" href="/favicon.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#e34c1f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Shaker">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;900&family=Public+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  html, body{margin:0; padding:0; overflow-x:clip;}
+  html{
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+  *{-webkit-tap-highlight-color:transparent;}
+  :root{
+    --bg:#f2f4f6;
+    --surface:#ffffff;
+    --surface-2:#e9edf1;
+    --ink:#12161c;
+    --ink-muted:#5b6572;
+    --line:#dde2e7;
+    --accent:#e34c1f;
+    --accent-ink:#fff8f4;
+    --squat:#a5711d;
+    --hinge:#6f49bd;
+    --push:#e34c1f;
+    --pull:#1c6fc2;
+    --core:#1c8f61;
+    --danger:#c0392b;
+    --radius-s:8px;
+    --radius-m:14px;
+    --radius-l:24px;
+    --font-display:'Big Shoulders Display', system-ui, sans-serif;
+    --font-body:'Public Sans', system-ui, -apple-system, sans-serif;
+    --font-mono:'JetBrains Mono', 'SFMono-Regular', Menlo, monospace;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#12161c;
+      --surface:#1b212a;
+      --surface-2:#242b35;
+      --ink:#eef1f5;
+      --ink-muted:#94a0ad;
+      --line:#2a323d;
+      --accent:#ff5d2e;
+      --accent-ink:#1c0900;
+      --squat:#e0a53f;
+      --hinge:#a486ea;
+      --push:#ff5d2e;
+      --pull:#4fa8ff;
+      --core:#3fd196;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#12161c;
+    --surface:#1b212a;
+    --surface-2:#242b35;
+    --ink:#eef1f5;
+    --ink-muted:#94a0ad;
+    --line:#2a323d;
+    --accent:#ff5d2e;
+    --accent-ink:#1c0900;
+    --squat:#e0a53f;
+    --hinge:#a486ea;
+    --push:#ff5d2e;
+    --pull:#4fa8ff;
+    --core:#3fd196;
+    color-scheme: dark;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--font-body);
+    padding-inline:16px;
+    padding-block:24px 48px;
+    display:flex;
+    justify-content:center;
+  }
+  main{
+    width:100%;
+    max-width:460px;
+    display:flex;
+    flex-direction:column;
+    gap:22px;
+  }
+  h1,h2,h3{
+    font-family:var(--font-display);
+    text-wrap:balance;
+    margin:0;
+  }
+  p{margin:0;}
+
+  /* header */
+  .app-header{
+    display:flex;
+    align-items:center;
+    gap:14px;
+  }
+  .mark{
+    width:42px;height:42px;
+    border-radius:var(--radius-s);
+    overflow:hidden;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    grid-template-rows:1fr 1fr;
+    flex:none;
+    box-shadow:0 0 0 1px var(--line);
+  }
+  .mark span{display:block;}
+  .mark span:nth-child(1),.mark span:nth-child(4){background:var(--ink);}
+  .mark span:nth-child(2),.mark span:nth-child(3){background:var(--accent);}
+  .app-header h1{
+    font-size:34px;
+    font-weight:900;
+    line-height:1;
+    letter-spacing:0.5px;
+  }
+  .app-header .tagline{
+    font-size:12px;
+    color:var(--ink-muted);
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    margin-top:2px;
+  }
+
+  /* generic card */
+  .card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius-l);
+    padding:18px;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+  }
+  .card-label{
+    font-size:12px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    color:var(--ink-muted);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+
+  /* equipment chips */
+  .chip-grid{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+  .chip{
+    font-family:var(--font-body);
+    font-size:13.5px;
+    font-weight:600;
+    color:var(--ink);
+    background:var(--surface-2);
+    border:1px solid var(--line);
+    border-radius:999px;
+    padding:9px 14px 9px 12px;
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    cursor:pointer;
+    transition:background .15s ease, border-color .15s ease, color .15s ease;
+  }
+  .chip .box{
+    width:15px;height:15px;
+    border-radius:4px;
+    border:1.5px solid var(--ink-muted);
+    display:grid;
+    place-items:center;
+    flex:none;
+    transition:background .15s ease, border-color .15s ease;
+  }
+  .chip .box svg{width:10px;height:10px;opacity:0;transition:opacity .1s ease;}
+  .chip.active{
+    background:color-mix(in srgb, var(--accent) 14%, var(--surface));
+    border-color:var(--accent);
+    color:var(--accent);
+  }
+  .chip.active .box{background:var(--accent);border-color:var(--accent);}
+  .chip.active .box svg{opacity:1;}
+  .chip.active .box svg path{stroke:var(--accent-ink);}
+
+  /* zone segmented */
+  .segmented{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px;
+  }
+  .seg-btn{
+    font-family:var(--font-body);
+    font-size:13.5px;
+    font-weight:600;
+    color:var(--ink-muted);
+    background:var(--surface-2);
+    border:1px solid var(--line);
+    border-radius:var(--radius-m);
+    padding:11px 8px;
+    text-align:center;
+    cursor:pointer;
+    transition:background .15s ease, border-color .15s ease, color .15s ease;
+  }
+  .seg-btn.active{
+    background:var(--ink);
+    border-color:var(--ink);
+    color:var(--bg);
+  }
+
+  /* duration */
+  .duration-row{
+    display:flex;
+    align-items:center;
+    gap:12px;
+  }
+  .stepper{
+    width:38px;height:38px;
+    border-radius:50%;
+    border:1px solid var(--line);
+    background:var(--surface-2);
+    color:var(--ink);
+    font-size:18px;
+    font-weight:700;
+    display:grid;
+    place-items:center;
+    cursor:pointer;
+    flex:none;
+  }
+  .duration-readout{
+    font-family:var(--font-display);
+    font-size:30px;
+    font-weight:900;
+    font-variant-numeric:tabular-nums;
+    min-width:88px;
+    text-align:center;
+  }
+  .duration-readout small{
+    font-family:var(--font-body);
+    font-weight:600;
+    font-size:12px;
+    color:var(--ink-muted);
+    text-transform:uppercase;
+    display:block;
+    margin-top:-4px;
+  }
+  input[type="range"]{
+    width:100%;
+    accent-color:var(--accent);
+  }
+
+  /* CTA */
+  .cta-wrap{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:10px;
+    text-align:center;
+  }
+  #checkBtn{
+    width:100%;
+    max-width:280px;
+    aspect-ratio:1;
+    border-radius:50%;
+    border:none;
+    background:var(--accent);
+    color:var(--accent-ink);
+    font-family:var(--font-display);
+    font-size:15px;
+    font-weight:400;
+    cursor:pointer;
+    display:grid;
+    place-items:center;
+    box-shadow:0 10px 30px -10px color-mix(in srgb, var(--accent) 70%, transparent);
+    transition:transform .12s ease;
+  }
+  #checkBtn:active{transform:scale(0.96);}
+  #checkBtn .big{
+    font-size:44px;
+    font-weight:900;
+    letter-spacing:1px;
+    display:block;
+  }
+  #checkBtn .small{
+    font-family:var(--font-body);
+    font-size:11px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:0.12em;
+    opacity:0.85;
+    display:block;
+    margin-top:2px;
+  }
+  .shake-hint{
+    font-size:12.5px;
+    color:var(--ink-muted);
+    max-width:280px;
+  }
+  #shakeEnableBtn{
+    font-family:var(--font-body);
+    font-size:12.5px;
+    font-weight:700;
+    color:var(--ink);
+    background:var(--surface-2);
+    border:1px solid var(--line);
+    border-radius:999px;
+    padding:8px 14px;
+    cursor:pointer;
+  }
+
+  /* results */
+  #results.hidden{display:none;}
+  .coverage-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:6px;
+  }
+  .coverage-pill{
+    font-size:11px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:0.04em;
+    padding:5px 9px;
+    border-radius:999px;
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    background:var(--surface-2);
+    color:var(--ink-muted);
+    border:1px solid var(--line);
+  }
+  .coverage-pill .dot{width:7px;height:7px;border-radius:50%;flex:none;}
+
+  .summary-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    gap:10px;
+    border-top:1px solid var(--line);
+    padding-top:12px;
+  }
+  .summary-row .est{
+    font-family:var(--font-mono);
+    font-size:13px;
+    color:var(--ink-muted);
+    font-variant-numeric:tabular-nums;
+  }
+  .summary-row .note{
+    font-size:12.5px;
+    color:var(--ink-muted);
+    max-width:230px;
+    text-align:right;
+  }
+
+  .session-list{
+    display:flex;
+    flex-direction:column;
+    gap:0;
+  }
+  .session-item{
+    display:flex;
+    gap:12px;
+    padding-block:13px;
+    border-top:1px solid var(--line);
+    align-items:flex-start;
+  }
+  .session-item:first-child{border-top:none;}
+  .idx{
+    font-family:var(--font-display);
+    font-size:20px;
+    font-weight:900;
+    color:var(--ink-muted);
+    width:22px;
+    flex:none;
+    font-variant-numeric:tabular-nums;
+  }
+  .item-body{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+    min-width:0;
+    flex:1;
+  }
+  .item-tag{
+    font-size:10.5px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    width:fit-content;
+  }
+  .item-tag .dot{width:6px;height:6px;border-radius:50%;}
+  .item-name{
+    font-size:15px;
+    font-weight:600;
+    line-height:1.3;
+  }
+  .item-scheme{
+    font-family:var(--font-mono);
+    font-size:12.5px;
+    color:var(--ink-muted);
+    font-variant-numeric:tabular-nums;
+  }
+  .session-item.frame .item-name{font-weight:700;}
+  .session-item.frame .idx{color:var(--ink);}
+
+  .footnote{
+    font-size:12px;
+    color:var(--ink-muted);
+    text-align:center;
+    padding-top:4px;
+  }
+</style>
+</head>
+<body>
+
+<main>
+  <header class="app-header">
+    <div class="mark" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+    <div>
+      <h1>Shaker</h1>
+      <div class="tagline">Séances sur mesure, en un check</div>
+    </div>
+  </header>
+
+  <section class="card">
+    <div class="card-label">Équipement disponible</div>
+    <div class="chip-grid" id="equipmentGrid"></div>
+  </section>
+
+  <section class="card">
+    <div class="card-label">Zone de travail</div>
+    <div class="segmented" id="zoneGrid"></div>
+  </section>
+
+  <section class="card">
+    <div class="card-label">
+      <span>Durée</span>
+    </div>
+    <div class="duration-row">
+      <button class="stepper" id="durMinus" type="button" aria-label="Réduire la durée">–</button>
+      <div class="duration-readout" id="durationReadout">45<small>minutes</small></div>
+      <button class="stepper" id="durPlus" type="button" aria-label="Augmenter la durée">+</button>
+    </div>
+    <input type="range" id="durationRange" min="15" max="75" step="5" value="45" aria-label="Durée de la séance en minutes">
+  </section>
+
+  <div class="cta-wrap">
+    <button id="checkBtn" type="button">
+      <span class="big">CHECK</span>
+      <span class="small">Générer la séance</span>
+    </button>
+    <p class="shake-hint">Secouez votre téléphone pour générer une nouvelle séance à tout moment.</p>
+    <button id="shakeEnableBtn" type="button" hidden>Activer la détection de secousse</button>
+  </div>
+
+  <section class="card" id="results">
+    <div class="coverage-row" id="coverageRow"></div>
+    <div class="session-list" id="sessionList"></div>
+    <div class="summary-row">
+      <div class="est" id="estimateText">≈ 45 min</div>
+      <div class="note" id="coherenceNote">Séance équilibrée : squat, hinge, push, pull et gainage.</div>
+    </div>
+  </section>
+
+  <p class="footnote">Shaker choisit à chaque fois une combinaison différente selon ton équipement, la zone visée et le temps disponible.</p>
+</main>
+
+<script>
+(function(){
+  "use strict";
+
+  var EQUIPMENT_OPTIONS = [
+    {id:"bodyweight", label:"Poids du corps"},
+    {id:"dumbbell",   label:"Haltères"},
+    {id:"barbell",    label:"Barre"},
+    {id:"kettlebell", label:"Kettlebell"},
+    {id:"band",       label:"Élastiques"},
+    {id:"bench",      label:"Banc"},
+    {id:"pullupbar",  label:"Barre de traction"},
+    {id:"cable",      label:"Poulie"},
+    {id:"machine",    label:"Machines guidées"}
+  ];
+
+  var ZONE_OPTIONS = [
+    {id:"full",  label:"Full body"},
+    {id:"upper", label:"Haut du corps"},
+    {id:"lower", label:"Bas du corps"},
+    {id:"any",   label:"Peu importe"}
+  ];
+
+  var PATTERN_META = {
+    squat:{label:"Squat", varName:"--squat"},
+    hinge:{label:"Hinge", varName:"--hinge"},
+    push: {label:"Push",  varName:"--push"},
+    pull: {label:"Pull",  varName:"--pull"},
+    core: {label:"Core",  varName:"--core"}
+  };
+
+  var REST_BY_PATTERN = {squat:75, hinge:75, push:60, pull:60, core:30};
+
+  // name, pattern, required equipment (empty = bodyweight only)
+  var EXERCISES = [
+    // PUSH
+    {n:"Pompes", p:"push", e:[]},
+    {n:"Pompes diamant", p:"push", e:[]},
+    {n:"Pompes pike (épaules)", p:"push", e:[]},
+    {n:"Pompes surélevées", p:"push", e:["bench"]},
+    {n:"Dips sur banc", p:"push", e:["bench"]},
+    {n:"Développé couché haltères", p:"push", e:["dumbbell","bench"]},
+    {n:"Développé militaire haltères", p:"push", e:["dumbbell"]},
+    {n:"Développé couché barre", p:"push", e:["barbell","bench"]},
+    {n:"Développé militaire barre", p:"push", e:["barbell"]},
+    {n:"Développé kettlebell", p:"push", e:["kettlebell"]},
+    {n:"Pompes lestées élastique", p:"push", e:["band"]},
+    {n:"Développé poulie haute", p:"push", e:["cable"]},
+    {n:"Presse à pectoraux (machine)", p:"push", e:["machine"]},
+    {n:"Développé épaules (machine)", p:"push", e:["machine"]},
+
+    // PULL
+    {n:"Rowing inversé (sous table)", p:"pull", e:[]},
+    {n:"Tractions", p:"pull", e:["pullupbar"]},
+    {n:"Tractions australiennes", p:"pull", e:["pullupbar"]},
+    {n:"Rowing haltère unilatéral", p:"pull", e:["dumbbell"]},
+    {n:"Rowing barre", p:"pull", e:["barbell"]},
+    {n:"Rowing kettlebell", p:"pull", e:["kettlebell"]},
+    {n:"Tirage élastique buste penché", p:"pull", e:["band"]},
+    {n:"Face pull élastique", p:"pull", e:["band"]},
+    {n:"Tirage vertical poulie", p:"pull", e:["cable"]},
+    {n:"Tirage horizontal poulie", p:"pull", e:["cable"]},
+    {n:"Rowing (machine)", p:"pull", e:["machine"]},
+    {n:"Tirage nuque (machine)", p:"pull", e:["machine"]},
+
+    // HINGE
+    {n:"Pont fessier", p:"hinge", e:[]},
+    {n:"Good morning au poids du corps", p:"hinge", e:[]},
+    {n:"Soulevé de terre jambe tendue (unilatéral)", p:"hinge", e:[]},
+    {n:"Soulevé de terre roumain haltères", p:"hinge", e:["dumbbell"]},
+    {n:"Hip thrust haltère", p:"hinge", e:["dumbbell","bench"]},
+    {n:"Soulevé de terre roumain kettlebell", p:"hinge", e:["kettlebell"]},
+    {n:"Swing kettlebell", p:"hinge", e:["kettlebell"]},
+    {n:"Soulevé de terre barre", p:"hinge", e:["barbell"]},
+    {n:"Hip thrust barre", p:"hinge", e:["barbell","bench"]},
+    {n:"Good morning élastique", p:"hinge", e:["band"]},
+    {n:"Extension lombaire (machine)", p:"hinge", e:["machine"]},
+
+    // SQUAT
+    {n:"Squat au poids du corps", p:"squat", e:[]},
+    {n:"Squat sauté", p:"squat", e:[]},
+    {n:"Fentes marchées", p:"squat", e:[]},
+    {n:"Squat bulgare (banc)", p:"squat", e:["bench"]},
+    {n:"Squat goblet haltère", p:"squat", e:["dumbbell"]},
+    {n:"Fentes haltères", p:"squat", e:["dumbbell"]},
+    {n:"Squat goblet kettlebell", p:"squat", e:["kettlebell"]},
+    {n:"Squat arrière barre", p:"squat", e:["barbell"]},
+    {n:"Front squat barre", p:"squat", e:["barbell"]},
+    {n:"Squat élastique", p:"squat", e:["band"]},
+    {n:"Presse à cuisses (machine)", p:"squat", e:["machine"]},
+    {n:"Extension jambes (machine)", p:"squat", e:["machine"]},
+
+    // CORE
+    {n:"Planche", p:"core", e:[]},
+    {n:"Planche latérale", p:"core", e:[]},
+    {n:"Mountain climbers", p:"core", e:[]},
+    {n:"Crunch vélo", p:"core", e:[]},
+    {n:"Relevé de jambes", p:"core", e:[]},
+    {n:"Dead bug", p:"core", e:[]},
+    {n:"Russian twist haltère", p:"core", e:["dumbbell"]},
+    {n:"Russian twist kettlebell", p:"core", e:["kettlebell"]},
+    {n:"Gainage lesté", p:"core", e:["dumbbell"]},
+    {n:"Pallof press élastique", p:"core", e:["band"]},
+    {n:"Pallof press poulie", p:"core", e:["cable"]}
+  ];
+
+  var state = {
+    equipment: new Set(["bodyweight","dumbbell","bench"]),
+    zone: "full",
+    duration: 45
+  };
+
+  try {
+    var saved = JSON.parse(localStorage.getItem("shaker.state") || "null");
+    if (saved && Array.isArray(saved.equipment) && saved.equipment.length) {
+      state.equipment = new Set(saved.equipment);
+    }
+    if (saved && ["full","upper","lower","any"].indexOf(saved.zone) !== -1) {
+      state.zone = saved.zone;
+    }
+    if (saved && typeof saved.duration === "number") {
+      state.duration = Math.min(75, Math.max(15, saved.duration));
+    }
+  } catch (err) {}
+
+  function persist(){
+    try {
+      localStorage.setItem("shaker.state", JSON.stringify({
+        equipment: Array.from(state.equipment),
+        zone: state.zone,
+        duration: state.duration
+      }));
+    } catch (err) {}
+  }
+
+  // ---------- build controls ----------
+  var equipmentGrid = document.getElementById("equipmentGrid");
+  EQUIPMENT_OPTIONS.forEach(function(opt){
+    var chip = document.createElement("button");
+    chip.type = "button";
+    chip.className = "chip";
+    chip.dataset.id = opt.id;
+    chip.innerHTML = '<span class="box"><svg viewBox="0 0 10 10" fill="none"><path d="M1 5L4 8L9 2" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>' + opt.label + '</span>';
+    chip.addEventListener("click", function(){
+      if (state.equipment.has(opt.id)) state.equipment.delete(opt.id);
+      else state.equipment.add(opt.id);
+      syncEquipmentUI();
+      persist();
+    });
+    equipmentGrid.appendChild(chip);
+  });
+
+  function syncEquipmentUI(){
+    Array.prototype.forEach.call(equipmentGrid.children, function(chip){
+      chip.classList.toggle("active", state.equipment.has(chip.dataset.id));
+    });
+  }
+
+  var zoneGrid = document.getElementById("zoneGrid");
+  ZONE_OPTIONS.forEach(function(opt){
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "seg-btn";
+    btn.dataset.id = opt.id;
+    btn.textContent = opt.label;
+    btn.addEventListener("click", function(){
+      state.zone = opt.id;
+      syncZoneUI();
+      persist();
+    });
+    zoneGrid.appendChild(btn);
+  });
+
+  function syncZoneUI(){
+    Array.prototype.forEach.call(zoneGrid.children, function(btn){
+      btn.classList.toggle("active", btn.dataset.id === state.zone);
+    });
+  }
+
+  var durationRange = document.getElementById("durationRange");
+  var durationReadout = document.getElementById("durationReadout");
+  durationRange.value = state.duration;
+
+  function syncDurationUI(){
+    durationRange.value = state.duration;
+    durationReadout.innerHTML = state.duration + "<small>minutes</small>";
+  }
+
+  durationRange.addEventListener("input", function(){
+    state.duration = parseInt(durationRange.value, 10);
+    syncDurationUI();
+    persist();
+  });
+  document.getElementById("durMinus").addEventListener("click", function(){
+    state.duration = Math.max(15, state.duration - 5);
+    syncDurationUI();
+    persist();
+  });
+  document.getElementById("durPlus").addEventListener("click", function(){
+    state.duration = Math.min(75, state.duration + 5);
+    syncDurationUI();
+    persist();
+  });
+
+  syncEquipmentUI();
+  syncZoneUI();
+  syncDurationUI();
+
+  // ---------- generation logic ----------
+  function computeSets(duration){
+    if (duration <= 35) return 3;
+    if (duration <= 65) return 4;
+    return 5;
+  }
+
+  function estimateExerciseMinutes(pattern, sets){
+    var work = pattern === "core" ? 35 : 40;
+    var rest = REST_BY_PATTERN[pattern];
+    return sets * (work + rest) / 60;
+  }
+
+  function compoundsForZone(zone){
+    if (zone === "upper") return ["push","pull"];
+    if (zone === "lower") return ["squat","hinge"];
+    return ["squat","push","hinge","pull"];
+  }
+
+  function buildPatternSequence(zone, numExercises){
+    var compounds = compoundsForZone(zone);
+    var nCompoundSlots = numExercises > compounds.length ? numExercises - 1 : compounds.length;
+    var seq = [];
+    for (var i = 0; i < nCompoundSlots; i++) seq.push(compounds[i % compounds.length]);
+    var coreSlots = Math.max(numExercises - seq.length, 1);
+    for (var j = 0; j < coreSlots; j++) seq.push("core");
+    return seq;
+  }
+
+  function pickExercise(pattern, equipmentSet, usedNames){
+    function matches(x, allowRepeat){
+      if (x.p !== pattern) return false;
+      if (!allowRepeat && usedNames.has(x.n)) return false;
+      return x.e.every(function(eq){ return equipmentSet.has(eq); });
+    }
+    var pool = EXERCISES.filter(function(x){ return matches(x, false); });
+    if (!pool.length) pool = EXERCISES.filter(function(x){ return matches(x, true); });
+    if (!pool.length) pool = EXERCISES.filter(function(x){ return x.p === pattern; });
+    var pick = pool[Math.floor(Math.random() * pool.length)];
+    usedNames.add(pick.n);
+    return pick;
+  }
+
+  function schemeFor(pattern, sets){
+    if (pattern === "core") return sets + " × 30–45 s · repos " + REST_BY_PATTERN[pattern] + " s";
+    return sets + " × 8–12 · repos " + REST_BY_PATTERN[pattern] + " s";
+  }
+
+  var coverageRow = document.getElementById("coverageRow");
+  var sessionList = document.getElementById("sessionList");
+  var estimateText = document.getElementById("estimateText");
+  var coherenceNote = document.getElementById("coherenceNote");
+  var resultsSection = document.getElementById("results");
+
+  var ZONE_NOTE = {
+    full: "Séance équilibrée : squat, hinge, push, pull et gainage.",
+    any: "Séance équilibrée : squat, hinge, push, pull et gainage.",
+    upper: "Focus haut du corps, alterné push / pull, fini par le gainage.",
+    lower: "Focus bas du corps, alterné squat / hinge, fini par le gainage."
+  };
+
+  function generate(){
+    var equipmentSet = state.equipment.size ? state.equipment : new Set(["bodyweight"]);
+    var sets = computeSets(state.duration);
+    var mainBudget = Math.max(state.duration - 8, 8);
+    var minExercises = compoundsForZone(state.zone).length + 1;
+    var avgMinutesPerExercise = (estimateExerciseMinutes("squat", sets) + estimateExerciseMinutes("push", sets)) / 2;
+    var numExercises = Math.round(mainBudget / avgMinutesPerExercise);
+    numExercises = Math.max(minExercises, Math.min(9, numExercises));
+
+    var sequence = buildPatternSequence(state.zone, numExercises);
+    var usedNames = new Set();
+    var items = sequence.map(function(pattern){
+      var ex = pickExercise(pattern, equipmentSet, usedNames);
+      return {pattern: pattern, name: ex.n, scheme: schemeFor(pattern, sets), minutes: estimateExerciseMinutes(pattern, sets)};
+    });
+
+    renderResults(items, sets);
+  }
+
+  function renderResults(items, sets){
+    // coverage pills
+    var seenPatterns = [];
+    items.forEach(function(it){
+      if (seenPatterns.indexOf(it.pattern) === -1) seenPatterns.push(it.pattern);
+    });
+    coverageRow.innerHTML = "";
+    Object.keys(PATTERN_META).forEach(function(key){
+      var covered = seenPatterns.indexOf(key) !== -1;
+      var pill = document.createElement("span");
+      pill.className = "coverage-pill";
+      pill.style.opacity = covered ? "1" : "0.45";
+      pill.innerHTML = '<span class="dot" style="background:var(' + PATTERN_META[key].varName + ')"></span>' + PATTERN_META[key].label;
+      coverageRow.appendChild(pill);
+    });
+
+    // session list
+    sessionList.innerHTML = "";
+    var totalMinutes = 5; // warm-up
+
+    var warmup = document.createElement("div");
+    warmup.className = "session-item frame";
+    warmup.innerHTML = '<div class="idx">–</div><div class="item-body"><div class="item-name">Échauffement</div><div class="item-scheme">5 min · mobilité générale + activation</div></div>';
+    sessionList.appendChild(warmup);
+
+    items.forEach(function(it, i){
+      totalMinutes += it.minutes;
+      var meta = PATTERN_META[it.pattern];
+      var row = document.createElement("div");
+      row.className = "session-item";
+      row.innerHTML =
+        '<div class="idx">' + (i + 1) + '</div>' +
+        '<div class="item-body">' +
+          '<span class="item-tag" style="color:var(' + meta.varName + ')"><span class="dot" style="background:var(' + meta.varName + ')"></span>' + meta.label + '</span>' +
+          '<div class="item-name">' + it.name + '</div>' +
+          '<div class="item-scheme">' + it.scheme + '</div>' +
+        '</div>';
+      sessionList.appendChild(row);
+    });
+
+    totalMinutes += 3; // cool-down
+    var cooldown = document.createElement("div");
+    cooldown.className = "session-item frame";
+    cooldown.innerHTML = '<div class="idx">–</div><div class="item-body"><div class="item-name">Retour au calme</div><div class="item-scheme">3 min · étirements</div></div>';
+    sessionList.appendChild(cooldown);
+
+    estimateText.textContent = "≈ " + Math.round(totalMinutes) + " min estimées (" + state.duration + " min demandées)";
+    coherenceNote.textContent = ZONE_NOTE[state.zone];
+
+    resultsSection.classList.remove("hidden");
+  }
+
+  document.getElementById("checkBtn").addEventListener("click", function(){
+    generate();
+    resultsSection.scrollIntoView({behavior: "smooth", block: "nearest"});
+  });
+
+  generate(); // realistic default state on load
+
+  // ---------- shake to generate ----------
+  var lastShake = 0;
+  var shakeThreshold = 22;
+  var shakeEnableBtn = document.getElementById("shakeEnableBtn");
+
+  function handleMotion(e){
+    var a = e.accelerationIncludingGravity || e.acceleration;
+    if (!a) return;
+    var mag = Math.sqrt(Math.pow(a.x || 0, 2) + Math.pow(a.y || 0, 2) + Math.pow(a.z || 0, 2));
+    var now = Date.now();
+    if (mag > shakeThreshold && now - lastShake > 1200) {
+      lastShake = now;
+      generate();
+    }
+  }
+
+  function initShake(){
+    if (typeof DeviceMotionEvent === "undefined") return;
+    if (typeof DeviceMotionEvent.requestPermission === "function") {
+      shakeEnableBtn.hidden = false;
+      shakeEnableBtn.addEventListener("click", function(){
+        DeviceMotionEvent.requestPermission().then(function(state){
+          if (state === "granted") {
+            window.addEventListener("devicemotion", handleMotion);
+            shakeEnableBtn.textContent = "Détection de secousse activée";
+            shakeEnableBtn.disabled = true;
+          } else {
+            shakeEnableBtn.textContent = "Autorisation refusée — utilise CHECK";
+          }
+        }).catch(function(){
+          shakeEnableBtn.textContent = "Indisponible — utilise CHECK";
+        });
+      });
+    } else {
+      window.addEventListener("devicemotion", handleMotion);
+    }
+  }
+  initShake();
+})();
+</script>
+</body>
+</html>
