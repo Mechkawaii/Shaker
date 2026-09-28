@@ -585,7 +585,12 @@
     core: {label:"Core",  varName:"--core"}
   };
 
-  var REST_BY_PATTERN = {squat:75, hinge:75, push:60, pull:60, core:30};
+  // Rest periods per NSCA guidance (large-muscle/multi-joint lifts: 2–5 min,
+  // minimum 2 min) and Schoenfeld & Pope (2016), which found 3-min rest
+  // periods outperformed 1-min for both strength and hypertrophy in
+  // resistance-trained lifters. Core/stability work uses the shorter
+  // 30–60s window typical for endurance-style bracing exercises.
+  var REST_BY_PATTERN = {squat:120, hinge:120, push:120, pull:120, core:45};
 
   // name, pattern, required equipment (empty = bodyweight only)
   var EXERCISES = [
