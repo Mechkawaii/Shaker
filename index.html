@@ -172,6 +172,16 @@
     letter-spacing:0.08em;
     margin-top:2px;
   }
+  .app-header .brand{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    flex:1;
+  }
+  .theme-toggle{display:inline-flex; align-items:center; gap:2px; background:var(--surface-2); border:1px solid var(--line); border-radius:20px; padding:3px; flex:none;}
+  .theme-btn{border:none; background:none; color:var(--ink-muted); width:26px; height:26px; border-radius:16px; display:flex; align-items:center; justify-content:center; cursor:pointer;}
+  .theme-btn svg{width:14px; height:14px;}
+  .theme-btn.active{background:var(--ink); color:var(--bg);}
 
   /* generic card */
   .card{
@@ -469,10 +479,23 @@
 
 <main>
   <header class="app-header">
-    <div class="mark" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
-    <div>
-      <h1>Shaker</h1>
-      <div class="tagline">Séances sur mesure, en un check</div>
+    <div class="brand">
+      <div class="mark" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+      <div>
+        <h1>Shaker</h1>
+        <div class="tagline">Séances sur mesure, en un check</div>
+      </div>
+    </div>
+    <div class="theme-toggle" id="theme-toggle">
+      <button class="theme-btn" type="button" data-theme-choice="light" aria-label="Thème clair" title="Clair">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2 12h2.5M19.5 12H22M4.2 19.8L6 18M18 6l1.8-1.8"/></svg>
+      </button>
+      <button class="theme-btn" type="button" data-theme-choice="system" aria-label="Thème système" title="Auto">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4.5" width="18" height="12" rx="2"/><path d="M8 20h8M12 16.5V20" stroke-linecap="round"/></svg>
+      </button>
+      <button class="theme-btn" type="button" data-theme-choice="dark" aria-label="Thème sombre" title="Sombre">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5Z"/></svg>
+      </button>
     </div>
   </header>
 
@@ -653,6 +676,32 @@
       }));
     } catch (err) {}
   }
+
+  // ---------- theme ----------
+  function applyTheme(choice){
+    var root = document.documentElement;
+    if (choice === "light") root.setAttribute("data-theme", "light");
+    else if (choice === "dark") root.setAttribute("data-theme", "dark");
+    else root.removeAttribute("data-theme");
+    try { localStorage.setItem("shaker-theme", choice); } catch (err) {}
+    document.querySelectorAll(".theme-btn").forEach(function(b){
+      b.classList.toggle("active", b.dataset.themeChoice === choice);
+    });
+  }
+
+  function loadTheme(){
+    var saved = "system";
+    try { saved = localStorage.getItem("shaker-theme") || "system"; } catch (err) {}
+    applyTheme(saved);
+  }
+
+  document.querySelectorAll(".theme-btn").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      applyTheme(btn.dataset.themeChoice);
+    });
+  });
+
+  loadTheme();
 
   // ---------- build controls ----------
   var equipmentGrid = document.getElementById("equipmentGrid");
