@@ -814,11 +814,17 @@
 
   function buildPatternSequence(zone, numExercises){
     var compounds = compoundsForZone(zone);
-    var nCompoundSlots = numExercises > compounds.length ? numExercises - 1 : compounds.length;
     var seq = [];
-    for (var i = 0; i < nCompoundSlots; i++) seq.push(compounds[i % compounds.length]);
-    var coreSlots = Math.max(numExercises - seq.length, 1);
-    for (var j = 0; j < coreSlots; j++) seq.push("core");
+    if (numExercises <= 1) {
+      seq.push(compounds[0]);
+      return seq;
+    }
+    // reserve the last slot for core, cycle through the zone's compound
+    // patterns for everything before it — covers every pattern once the
+    // time budget allows it, but never forces more exercises than fit
+    var mainSlots = numExercises - 1;
+    for (var i = 0; i < mainSlots; i++) seq.push(compounds[i % compounds.length]);
+    seq.push("core");
     return seq;
   }
 
@@ -857,11 +863,10 @@
   function generate(){
     var equipmentSet = state.equipment.size ? state.equipment : new Set(["bodyweight"]);
     var sets = computeSets(state.duration);
-    var mainBudget = Math.max(state.duration - 8, 8);
-    var minExercises = compoundsForZone(state.zone).length + 1;
-    var avgMinutesPerExercise = (estimateExerciseMinutes("squat", sets) + estimateExerciseMinutes("push", sets)) / 2;
+    var mainBudget = Math.max(state.duration - 8, 1);
+    var avgMinutesPerExercise = estimateExerciseMinutes("squat", sets);
     var numExercises = Math.round(mainBudget / avgMinutesPerExercise);
-    numExercises = Math.max(minExercises, Math.min(9, numExercises));
+    numExercises = Math.max(1, Math.min(6, numExercises));
 
     var sequence = buildPatternSequence(state.zone, numExercises);
     var usedNames = new Set();
@@ -920,7 +925,14 @@
     sessionList.appendChild(cooldown);
 
     estimateText.textContent = "≈ " + Math.round(totalMinutes) + " min estimées (" + state.duration + " min demandées)";
-    coherenceNote.textContent = ZONE_NOTE[state.zone];
+
+    var fullCoverage = compoundsForZone(state.zone).every(function(p){ return seenPatterns.indexOf(p) !== -1; });
+    if (fullCoverage) {
+      coherenceNote.textContent = ZONE_NOTE[state.zone];
+    } else {
+      var labels = items.map(function(it){ return PATTERN_META[it.pattern].label; });
+      coherenceNote.textContent = "Séance courte : " + labels.join(" → ") + ". Choisis plus de temps pour couvrir tous les patterns.";
+    }
 
     resultsSection.classList.remove("hidden");
   }
