@@ -925,7 +925,17 @@
   function getAudioCtx(){
     var AC = window.AudioContext || window.webkitAudioContext;
     if (!AC) return null;
-    if (!audioCtx) audioCtx = new AC();
+    if (!audioCtx) {
+      audioCtx = new AC();
+      // iOS unlock: play a near-silent buffer synchronously with the gesture
+      try {
+        var silentBuffer = audioCtx.createBuffer(1, 1, audioCtx.sampleRate);
+        var silentSource = audioCtx.createBufferSource();
+        silentSource.buffer = silentBuffer;
+        silentSource.connect(audioCtx.destination);
+        silentSource.start(0);
+      } catch (err) {}
+    }
     if (audioCtx.state === "suspended") audioCtx.resume();
     return audioCtx;
   }
