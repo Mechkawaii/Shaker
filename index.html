@@ -707,8 +707,8 @@
   }
 
   function loadTheme(){
-    var saved = "system";
-    try { saved = localStorage.getItem("shaker-theme") || "system"; } catch (err) {}
+    var saved = "light";
+    try { saved = localStorage.getItem("shaker-theme") || "light"; } catch (err) {}
     applyTheme(saved);
   }
 
