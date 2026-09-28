@@ -326,6 +326,20 @@
     transition:transform .12s ease;
   }
   #checkBtn:active{transform:scale(0.96);}
+  @keyframes shakeWiggle{
+    0%{transform:translate(0,0) rotate(0deg);}
+    10%{transform:translate(-5px,2px) rotate(-7deg);}
+    20%{transform:translate(5px,-2px) rotate(7deg);}
+    30%{transform:translate(-6px,1px) rotate(-9deg);}
+    40%{transform:translate(6px,-1px) rotate(9deg);}
+    50%{transform:translate(-5px,2px) rotate(-7deg);}
+    60%{transform:translate(5px,-2px) rotate(7deg);}
+    70%{transform:translate(-3px,1px) rotate(-4deg);}
+    80%{transform:translate(3px,-1px) rotate(4deg);}
+    90%{transform:translate(-1px,0) rotate(-2deg);}
+    100%{transform:translate(0,0) rotate(0deg);}
+  }
+  #checkBtn.shaking{animation:shakeWiggle .5s ease;}
   #checkBtn .check-logo{
     width:100%;
     height:auto;
@@ -906,7 +920,63 @@
     resultsSection.classList.remove("hidden");
   }
 
+  // ---------- shake feedback: vibration + sound + wiggle ----------
+  var audioCtx = null;
+  function getAudioCtx(){
+    var AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return null;
+    if (!audioCtx) audioCtx = new AC();
+    if (audioCtx.state === "suspended") audioCtx.resume();
+    return audioCtx;
+  }
+
+  function playShakeSound(){
+    var ctx = getAudioCtx();
+    if (!ctx) return;
+    var now = ctx.currentTime;
+    var bursts = 4;
+    for (var i = 0; i < bursts; i++){
+      var t0 = now + i * 0.085;
+      var duration = 0.1;
+      var bufferSize = Math.max(1, Math.floor(ctx.sampleRate * duration));
+      var buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      var data = buffer.getChannelData(0);
+      for (var j = 0; j < bufferSize; j++){
+        data[j] = Math.random() * 2 - 1;
+      }
+      var noise = ctx.createBufferSource();
+      noise.buffer = buffer;
+
+      var bandpass = ctx.createBiquadFilter();
+      bandpass.type = "bandpass";
+      bandpass.frequency.value = 4200 + Math.random() * 1800;
+      bandpass.Q.value = 0.7;
+
+      var gain = ctx.createGain();
+      gain.gain.setValueAtTime(0, t0);
+      gain.gain.linearRampToValueAtTime(0.3, t0 + 0.008);
+      gain.gain.exponentialRampToValueAtTime(0.001, t0 + duration);
+
+      noise.connect(bandpass);
+      bandpass.connect(gain);
+      gain.connect(ctx.destination);
+
+      noise.start(t0);
+      noise.stop(t0 + duration);
+    }
+  }
+
+  function triggerShakeFX(){
+    if (navigator.vibrate) navigator.vibrate([35, 25, 35, 25, 55]);
+    playShakeSound();
+    var btn = document.getElementById("checkBtn");
+    btn.classList.remove("shaking");
+    void btn.offsetWidth;
+    btn.classList.add("shaking");
+  }
+
   document.getElementById("checkBtn").addEventListener("click", function(){
+    triggerShakeFX();
     generate();
     resultsSection.scrollIntoView({behavior: "smooth", block: "nearest"});
   });
@@ -925,6 +995,7 @@
     var now = Date.now();
     if (mag > shakeThreshold && now - lastShake > 1200) {
       lastShake = now;
+      triggerShakeFX();
       generate();
     }
   }
