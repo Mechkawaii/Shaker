@@ -547,7 +547,7 @@
   <div class="cta-wrap">
     <button id="checkBtn" type="button">
       <img class="check-logo" src="/logo.png" alt="" aria-hidden="true">
-      <span class="big">CHECK</span>
+      <span class="big">SHAKE</span>
       <span class="small">Générer la séance</span>
     </button>
     <p class="shake-hint">Secouez votre téléphone pour générer une nouvelle séance à tout moment.</p>
@@ -1089,10 +1089,10 @@
             shakeEnableBtn.textContent = "Détection de secousse activée";
             shakeEnableBtn.disabled = true;
           } else {
-            shakeEnableBtn.textContent = "Autorisation refusée — utilise CHECK";
+            shakeEnableBtn.textContent = "Autorisation refusée — utilise SHAKE";
           }
         }).catch(function(){
-          shakeEnableBtn.textContent = "Indisponible — utilise CHECK";
+          shakeEnableBtn.textContent = "Indisponible — utilise SHAKE";
         });
       });
     } else {
