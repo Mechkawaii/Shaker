@@ -532,6 +532,18 @@
     <input type="range" id="durationRange" min="15" max="75" step="5" value="45" aria-label="Durée de la séance en minutes">
   </section>
 
+  <section class="card">
+    <div class="card-label">
+      <span>Repos entre séries</span>
+    </div>
+    <div class="duration-row">
+      <button class="stepper" id="restMinus" type="button" aria-label="Réduire le repos">–</button>
+      <div class="duration-readout" id="restReadout">120<small>secondes</small></div>
+      <button class="stepper" id="restPlus" type="button" aria-label="Augmenter le repos">+</button>
+    </div>
+    <input type="range" id="restRange" min="60" max="180" step="15" value="120" aria-label="Repos entre séries en secondes">
+  </section>
+
   <div class="cta-wrap">
     <button id="checkBtn" type="button">
       <img class="check-logo" src="/logo.png" alt="" aria-hidden="true">
@@ -590,7 +602,15 @@
   // periods outperformed 1-min for both strength and hypertrophy in
   // resistance-trained lifters. Core/stability work uses the shorter
   // 30–60s window typical for endurance-style bracing exercises.
-  var REST_BY_PATTERN = {squat:120, hinge:120, push:120, pull:120, core:45};
+  // The main-pattern rest is adjustable via the "Repos entre séries"
+  // slider (default 120s); core rest scales proportionally (~0.375×,
+  // floored at 30s) so it stays in its own shorter endurance window.
+  function coreRestFor(mainRest){
+    return Math.max(30, Math.round(mainRest * 0.375 / 5) * 5);
+  }
+  function getRest(pattern){
+    return pattern === "core" ? coreRestFor(state.restSeconds) : state.restSeconds;
+  }
 
   // name, pattern, required equipment (empty = bodyweight only)
   var EXERCISES = [
@@ -668,7 +688,8 @@
   var state = {
     equipment: new Set(["bodyweight","dumbbell","bench"]),
     zone: "full",
-    duration: 45
+    duration: 45,
+    restSeconds: 120
   };
 
   try {
@@ -682,6 +703,9 @@
     if (saved && typeof saved.duration === "number") {
       state.duration = Math.min(75, Math.max(15, saved.duration));
     }
+    if (saved && typeof saved.restSeconds === "number") {
+      state.restSeconds = Math.min(180, Math.max(60, saved.restSeconds));
+    }
   } catch (err) {}
 
   function persist(){
@@ -689,7 +713,8 @@
       localStorage.setItem("shaker.state", JSON.stringify({
         equipment: Array.from(state.equipment),
         zone: state.zone,
-        duration: state.duration
+        duration: state.duration,
+        restSeconds: state.restSeconds
       }));
     } catch (err) {}
   }
@@ -789,9 +814,35 @@
     persist();
   });
 
+  var restRange = document.getElementById("restRange");
+  var restReadout = document.getElementById("restReadout");
+  restRange.value = state.restSeconds;
+
+  function syncRestUI(){
+    restRange.value = state.restSeconds;
+    restReadout.innerHTML = state.restSeconds + "<small>secondes</small>";
+  }
+
+  restRange.addEventListener("input", function(){
+    state.restSeconds = parseInt(restRange.value, 10);
+    syncRestUI();
+    persist();
+  });
+  document.getElementById("restMinus").addEventListener("click", function(){
+    state.restSeconds = Math.max(60, state.restSeconds - 15);
+    syncRestUI();
+    persist();
+  });
+  document.getElementById("restPlus").addEventListener("click", function(){
+    state.restSeconds = Math.min(180, state.restSeconds + 15);
+    syncRestUI();
+    persist();
+  });
+
   syncEquipmentUI();
   syncZoneUI();
   syncDurationUI();
+  syncRestUI();
 
   // ---------- generation logic ----------
   function computeSets(duration){
@@ -802,7 +853,7 @@
 
   function estimateExerciseMinutes(pattern, sets){
     var work = pattern === "core" ? 35 : 40;
-    var rest = REST_BY_PATTERN[pattern];
+    var rest = getRest(pattern);
     return sets * (work + rest) / 60;
   }
 
@@ -843,8 +894,8 @@
   }
 
   function schemeFor(pattern, sets){
-    if (pattern === "core") return sets + " × 30–45 s · repos " + REST_BY_PATTERN[pattern] + " s";
-    return sets + " × 8–12 · repos " + REST_BY_PATTERN[pattern] + " s";
+    if (pattern === "core") return sets + " × 30–45 s · repos " + getRest(pattern) + " s";
+    return sets + " × 8–12 · repos " + getRest(pattern) + " s";
   }
 
   var coverageRow = document.getElementById("coverageRow");
