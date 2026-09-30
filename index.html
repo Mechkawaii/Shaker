@@ -1074,14 +1074,20 @@
           name: exA.n,
           scheme: sets + " × 8–12 · repos " + transitionRest + " s (enchaîné)",
           minutes: sets * (40 + transitionRest) / 60,
-          pairNote: "⇄ Superset avec " + PATTERN_META[pair[1]].label
+          pairNote: "⇄ Superset avec " + PATTERN_META[pair[1]].label,
+          sets: sets,
+          restSeconds: transitionRest,
+          restLabel: " (enchaîné)"
         });
         items.push({
           pattern: pair[1],
           name: exB.n,
           scheme: sets + " × 8–12 · repos " + mainRest + " s",
           minutes: sets * (40 + mainRest) / 60,
-          pairNote: "⇄ Superset avec " + PATTERN_META[pair[0]].label
+          pairNote: "⇄ Superset avec " + PATTERN_META[pair[0]].label,
+          sets: sets,
+          restSeconds: mainRest,
+          restLabel: ""
         });
         remaining -= pairCost;
         addedThisLap = true;
@@ -1098,7 +1104,10 @@
         name: exSolo.n,
         scheme: schemeFor(soloPattern, sets),
         minutes: estimateExerciseMinutes(soloPattern, sets),
-        pairNote: null
+        pairNote: null,
+        sets: sets,
+        restSeconds: getRest(soloPattern),
+        restLabel: ""
       });
       remaining -= estimateExerciseMinutes(soloPattern, sets);
     }
@@ -1111,7 +1120,10 @@
         name: exCore.n,
         scheme: schemeFor("core", sets),
         minutes: coreCost,
-        pairNote: null
+        pairNote: null,
+        sets: sets,
+        restSeconds: getRest("core"),
+        restLabel: ""
       });
     }
 
@@ -1134,7 +1146,9 @@
       coverageRow.appendChild(pill);
     });
 
-    // flattened steps for the session player (warm-up → exercises → cool-down)
+    // flattened steps for the session player (warm-up → exercises → cool-down),
+    // broken down set by set (not one step per whole exercise) so the pair's
+    // A → B → A → B alternation is validated in the order it's actually done
     currentSessionSteps = [];
     currentSessionSteps.push({
       type: "warmup",
@@ -1143,15 +1157,51 @@
       scheme: "5 min · mobilité générale + activation",
       pairNote: null
     });
-    items.forEach(function(it){
-      currentSessionSteps.push({
-        type: "exercise",
-        pattern: it.pattern,
-        name: it.name,
-        scheme: it.scheme,
-        pairNote: it.pairNote
-      });
-    });
+
+    function setScheme(it, setIndex, setCount){
+      var reps = it.pattern === "core" ? "30–45 s" : "8–12";
+      return "Série " + setIndex + " / " + setCount + " · " + reps + " · repos " + it.restSeconds + " s" + (it.restLabel || "");
+    }
+
+    var idx = 0;
+    while (idx < items.length){
+      var itA = items[idx];
+      var pairedWithNext = itA.pairNote && idx + 1 < items.length && items[idx + 1].pairNote;
+      if (pairedWithNext){
+        var itB = items[idx + 1];
+        var setCount = itA.sets || sets;
+        for (var s = 1; s <= setCount; s++){
+          currentSessionSteps.push({
+            type: "exercise",
+            pattern: itA.pattern,
+            name: itA.name,
+            scheme: setScheme(itA, s, setCount),
+            pairNote: itA.pairNote
+          });
+          currentSessionSteps.push({
+            type: "exercise",
+            pattern: itB.pattern,
+            name: itB.name,
+            scheme: setScheme(itB, s, setCount),
+            pairNote: itB.pairNote
+          });
+        }
+        idx += 2;
+      } else {
+        var setCountSolo = itA.sets || sets;
+        for (var s2 = 1; s2 <= setCountSolo; s2++){
+          currentSessionSteps.push({
+            type: "exercise",
+            pattern: itA.pattern,
+            name: itA.name,
+            scheme: setScheme(itA, s2, setCountSolo),
+            pairNote: itA.pairNote
+          });
+        }
+        idx += 1;
+      }
+    }
+
     currentSessionSteps.push({
       type: "cooldown",
       pattern: null,
