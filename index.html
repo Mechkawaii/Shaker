@@ -382,6 +382,7 @@
 
   /* results */
   #results.hidden{display:none;}
+  #playerSection.hidden{display:none;}
   .coverage-row{
     display:flex;
     flex-wrap:wrap;
@@ -422,6 +423,113 @@
     color:var(--ink-muted);
     max-width:230px;
     text-align:right;
+  }
+
+  .start-session-btn{
+    width:100%;
+    margin-top:14px;
+    padding:13px;
+    border:none;
+    border-radius:var(--radius-m);
+    background:var(--ink);
+    color:var(--bg);
+    font-family:var(--font-display);
+    font-size:15px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:0.04em;
+    cursor:pointer;
+  }
+  .start-session-btn:active{transform:scale(0.98);}
+
+  /* session player */
+  .player-card{gap:16px;}
+  .player-progress{
+    font-family:var(--font-mono);
+    font-size:12px;
+    color:var(--ink-muted);
+    text-align:center;
+    font-variant-numeric:tabular-nums;
+  }
+  .player-bar{
+    width:100%;
+    height:5px;
+    border-radius:999px;
+    background:var(--surface-2);
+    overflow:hidden;
+  }
+  .player-bar-fill{
+    height:100%;
+    width:0%;
+    background:var(--lime-deep);
+    border-radius:999px;
+    transition:width .25s ease;
+  }
+  .player-step{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:8px;
+    text-align:center;
+    padding-block:18px;
+  }
+  .player-name{
+    font-family:var(--font-display);
+    font-size:28px;
+    font-weight:800;
+    text-transform:uppercase;
+    line-height:1.1;
+  }
+  .player-scheme{
+    font-family:var(--font-mono);
+    font-size:14px;
+    color:var(--ink-muted);
+    font-variant-numeric:tabular-nums;
+  }
+  .player-validate-btn{
+    width:100%;
+    padding:16px;
+    border:none;
+    border-radius:var(--radius-m);
+    background:var(--lime);
+    color:#14150F;
+    font-family:var(--font-display);
+    font-size:18px;
+    font-weight:800;
+    text-transform:uppercase;
+    letter-spacing:0.04em;
+    cursor:pointer;
+  }
+  .player-validate-btn:active{transform:scale(0.97);}
+  .player-quit-btn{
+    width:100%;
+    padding:11px;
+    border:1px solid var(--line);
+    border-radius:var(--radius-m);
+    background:none;
+    color:var(--ink-muted);
+    font-family:var(--font-body);
+    font-size:13px;
+    font-weight:600;
+    cursor:pointer;
+  }
+  .player-done{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:10px;
+    text-align:center;
+    padding-block:12px;
+  }
+  .player-done-title{
+    font-family:var(--font-display);
+    font-size:24px;
+    font-weight:800;
+    text-transform:uppercase;
+  }
+  .player-done-sub{
+    font-size:13px;
+    color:var(--ink-muted);
   }
 
   .session-list{
@@ -565,6 +673,28 @@
     <div class="summary-row">
       <div class="est" id="estimateText">≈ 45 min</div>
       <div class="note" id="coherenceNote">Séance équilibrée : squat, hinge, push, pull et gainage.</div>
+    </div>
+    <button id="startSessionBtn" type="button" class="start-session-btn">Démarrer la séance</button>
+  </section>
+
+  <section class="card player-card hidden" id="playerSection">
+    <div class="player-progress" id="playerProgress">Étape 1 / 7</div>
+    <div class="player-bar"><div class="player-bar-fill" id="playerBarFill"></div></div>
+
+    <div class="player-step" id="playerStep">
+      <span class="item-tag" id="playerTag"><span class="dot" id="playerDot"></span><span id="playerTagLabel"></span></span>
+      <div class="player-name" id="playerName">Exercice</div>
+      <div class="player-scheme" id="playerScheme"></div>
+      <div class="item-pairnote" id="playerPairnote"></div>
+    </div>
+
+    <button id="playerValidateBtn" type="button" class="player-validate-btn">✓ Valider</button>
+    <button id="playerQuitBtn" type="button" class="player-quit-btn">Quitter la séance</button>
+
+    <div class="player-done" id="playerDone" hidden>
+      <div class="player-done-title">Séance terminée 🎉</div>
+      <p class="player-done-sub">Bien joué. Repos bien mérité.</p>
+      <button id="playerCloseBtn" type="button" class="player-quit-btn">Fermer</button>
     </div>
   </section>
 
@@ -906,6 +1036,7 @@
   var estimateText = document.getElementById("estimateText");
   var coherenceNote = document.getElementById("coherenceNote");
   var resultsSection = document.getElementById("results");
+  var currentSessionSteps = [];
 
   var ZONE_NOTE = {
     full: "Séance équilibrée en supersets antagonistes : squat/hinge puis push/pull, gainage en finisher.",
@@ -1003,6 +1134,32 @@
       coverageRow.appendChild(pill);
     });
 
+    // flattened steps for the session player (warm-up → exercises → cool-down)
+    currentSessionSteps = [];
+    currentSessionSteps.push({
+      type: "warmup",
+      pattern: null,
+      name: "Échauffement",
+      scheme: "5 min · mobilité générale + activation",
+      pairNote: null
+    });
+    items.forEach(function(it){
+      currentSessionSteps.push({
+        type: "exercise",
+        pattern: it.pattern,
+        name: it.name,
+        scheme: it.scheme,
+        pairNote: it.pairNote
+      });
+    });
+    currentSessionSteps.push({
+      type: "cooldown",
+      pattern: null,
+      name: "Retour au calme",
+      scheme: "3 min · étirements",
+      pairNote: null
+    });
+
     // session list
     sessionList.innerHTML = "";
     var totalMinutes = 5; // warm-up
@@ -1045,7 +1202,86 @@
     }
 
     resultsSection.classList.remove("hidden");
+    playerSection.classList.add("hidden");
   }
+
+  // ---------- session player ----------
+  var playerSection = document.getElementById("playerSection");
+  var startSessionBtn = document.getElementById("startSessionBtn");
+  var playerProgress = document.getElementById("playerProgress");
+  var playerBarFill = document.getElementById("playerBarFill");
+  var playerStep = document.getElementById("playerStep");
+  var playerTag = document.getElementById("playerTag");
+  var playerDot = document.getElementById("playerDot");
+  var playerTagLabel = document.getElementById("playerTagLabel");
+  var playerName = document.getElementById("playerName");
+  var playerScheme = document.getElementById("playerScheme");
+  var playerPairnote = document.getElementById("playerPairnote");
+  var playerValidateBtn = document.getElementById("playerValidateBtn");
+  var playerQuitBtn = document.getElementById("playerQuitBtn");
+  var playerDone = document.getElementById("playerDone");
+  var playerCloseBtn = document.getElementById("playerCloseBtn");
+
+  var playerIndex = 0;
+
+  function showPlayerStep(){
+    var step = currentSessionSteps[playerIndex];
+    playerDone.style.display = "none";
+    playerStep.style.display = "";
+    playerValidateBtn.style.display = "";
+
+    playerProgress.textContent = "Étape " + (playerIndex + 1) + " / " + currentSessionSteps.length;
+    playerBarFill.style.width = Math.round(((playerIndex) / currentSessionSteps.length) * 100) + "%";
+
+    if (step.pattern && PATTERN_META[step.pattern]) {
+      var meta = PATTERN_META[step.pattern];
+      playerTag.style.display = "";
+      playerTag.style.color = "var(" + meta.varName + ")";
+      playerDot.style.background = "var(" + meta.varName + ")";
+      playerTagLabel.textContent = meta.label;
+    } else {
+      playerTag.style.display = "none";
+    }
+
+    playerName.textContent = step.name;
+    playerScheme.textContent = step.scheme;
+    playerPairnote.textContent = step.pairNote || "";
+    playerPairnote.style.display = step.pairNote ? "block" : "none";
+
+    playerValidateBtn.textContent = (playerIndex === currentSessionSteps.length - 1) ? "✓ Terminer" : "✓ Valider";
+  }
+
+  function startSession(){
+    if (!currentSessionSteps.length) return;
+    playerIndex = 0;
+    resultsSection.classList.add("hidden");
+    playerSection.classList.remove("hidden");
+    showPlayerStep();
+  }
+
+  function validateStep(){
+    if (navigator.vibrate) navigator.vibrate(30);
+    if (playerIndex >= currentSessionSteps.length - 1) {
+      playerStep.style.display = "none";
+      playerValidateBtn.style.display = "none";
+      playerBarFill.style.width = "100%";
+      playerProgress.textContent = "Étape " + currentSessionSteps.length + " / " + currentSessionSteps.length;
+      playerDone.style.display = "";
+      return;
+    }
+    playerIndex++;
+    showPlayerStep();
+  }
+
+  function quitSession(){
+    playerSection.classList.add("hidden");
+    resultsSection.classList.remove("hidden");
+  }
+
+  startSessionBtn.addEventListener("click", startSession);
+  playerValidateBtn.addEventListener("click", validateStep);
+  playerQuitBtn.addEventListener("click", quitSession);
+  playerCloseBtn.addEventListener("click", quitSession);
 
   // ---------- shake feedback: vibration + sound + wiggle ----------
   var audioCtx = null;
