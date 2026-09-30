@@ -925,27 +925,37 @@
     var items = [];
     var remaining = mainBudget;
 
-    for (var p = 0; p < pairs.length; p++){
-      var pair = pairs[p];
-      var pairCost = sets * (40 + transitionRest + 40 + mainRest) / 60;
-      if (remaining < pairCost) break;
-      var exA = pickExercise(pair[0], equipmentSet, usedNames);
-      var exB = pickExercise(pair[1], equipmentSet, usedNames);
-      items.push({
-        pattern: pair[0],
-        name: exA.n,
-        scheme: sets + " × 8–12 · repos " + transitionRest + " s (enchaîné)",
-        minutes: sets * (40 + transitionRest) / 60,
-        pairNote: "⇄ Superset avec " + PATTERN_META[pair[1]].label
-      });
-      items.push({
-        pattern: pair[1],
-        name: exB.n,
-        scheme: sets + " × 8–12 · repos " + mainRest + " s",
-        minutes: sets * (40 + mainRest) / 60,
-        pairNote: "⇄ Superset avec " + PATTERN_META[pair[0]].label
-      });
-      remaining -= pairCost;
+    // keep looping through the zone's antagonist pairs (adding a fresh
+    // exercise each time, since usedNames blocks repeats) until the time
+    // budget runs out, instead of stopping after a single pass — a long
+    // session should actually use its time rather than leave it idle
+    var pairCost = sets * (40 + transitionRest + 40 + mainRest) / 60;
+    var maxLaps = 3;
+    for (var lap = 0; lap < maxLaps; lap++){
+      var addedThisLap = false;
+      for (var p = 0; p < pairs.length; p++){
+        if (remaining < pairCost) continue;
+        var pair = pairs[p];
+        var exA = pickExercise(pair[0], equipmentSet, usedNames);
+        var exB = pickExercise(pair[1], equipmentSet, usedNames);
+        items.push({
+          pattern: pair[0],
+          name: exA.n,
+          scheme: sets + " × 8–12 · repos " + transitionRest + " s (enchaîné)",
+          minutes: sets * (40 + transitionRest) / 60,
+          pairNote: "⇄ Superset avec " + PATTERN_META[pair[1]].label
+        });
+        items.push({
+          pattern: pair[1],
+          name: exB.n,
+          scheme: sets + " × 8–12 · repos " + mainRest + " s",
+          minutes: sets * (40 + mainRest) / 60,
+          pairNote: "⇄ Superset avec " + PATTERN_META[pair[0]].label
+        });
+        remaining -= pairCost;
+        addedThisLap = true;
+      }
+      if (!addedThisLap) break;
     }
 
     if (items.length === 0){
