@@ -475,6 +475,11 @@
     color:var(--ink-muted);
     font-variant-numeric:tabular-nums;
   }
+  .item-pairnote{
+    font-size:11.5px;
+    color:var(--accent);
+    font-weight:600;
+  }
   .session-item.frame .item-name{font-weight:700;}
   .session-item.frame .idx{color:var(--ink);}
 
@@ -863,20 +868,18 @@
     return ["squat","push","hinge","pull"];
   }
 
-  function buildPatternSequence(zone, numExercises){
-    var compounds = compoundsForZone(zone);
-    var seq = [];
-    if (numExercises <= 1) {
-      seq.push(compounds[0]);
-      return seq;
-    }
-    // reserve the last slot for core, cycle through the zone's compound
-    // patterns for everything before it — covers every pattern once the
-    // time budget allows it, but never forces more exercises than fit
-    var mainSlots = numExercises - 1;
-    for (var i = 0; i < mainSlots; i++) seq.push(compounds[i % compounds.length]);
-    seq.push("core");
-    return seq;
+  // Agonist-antagonist pairing: squat/hinge (quad-dominant vs hip-hinge/
+  // hamstring-glute, same knee-hip joint action) and push/pull (anterior
+  // vs posterior upper body) are true opposing-muscle pairs. Research on
+  // agonist-antagonist paired sets/supersets (e.g. Robbins et al.) shows
+  // pairing them — light/no rest between the two exercises, full rest
+  // after the pair — hits the same volume load as straight sets in
+  // roughly half the time, since one side fully recovers while its
+  // antagonist works.
+  function compoundPairsForZone(zone){
+    if (zone === "upper") return [["push","pull"]];
+    if (zone === "lower") return [["squat","hinge"]];
+    return [["squat","hinge"],["push","pull"]];
   }
 
   function pickExercise(pattern, equipmentSet, usedNames){
@@ -905,26 +908,71 @@
   var resultsSection = document.getElementById("results");
 
   var ZONE_NOTE = {
-    full: "Séance équilibrée : squat, hinge, push, pull et gainage.",
-    any: "Séance équilibrée : squat, hinge, push, pull et gainage.",
-    upper: "Focus haut du corps, alterné push / pull, fini par le gainage.",
-    lower: "Focus bas du corps, alterné squat / hinge, fini par le gainage."
+    full: "Séance équilibrée en supersets antagonistes : squat/hinge puis push/pull, gainage en finisher.",
+    any: "Séance équilibrée en supersets antagonistes : squat/hinge puis push/pull, gainage en finisher.",
+    upper: "Focus haut du corps en superset antagoniste push/pull, fini par le gainage.",
+    lower: "Focus bas du corps en superset antagoniste squat/hinge, fini par le gainage."
   };
 
   function generate(){
     var equipmentSet = state.equipment.size ? state.equipment : new Set(["bodyweight"]);
     var sets = computeSets(state.duration);
+    var mainRest = state.restSeconds;
+    var transitionRest = 20; // quick switch between the two sides of a superset pair
     var mainBudget = Math.max(state.duration - 8, 1);
-    var avgMinutesPerExercise = estimateExerciseMinutes("squat", sets);
-    var numExercises = Math.round(mainBudget / avgMinutesPerExercise);
-    numExercises = Math.max(1, Math.min(6, numExercises));
-
-    var sequence = buildPatternSequence(state.zone, numExercises);
+    var pairs = compoundPairsForZone(state.zone);
     var usedNames = new Set();
-    var items = sequence.map(function(pattern){
-      var ex = pickExercise(pattern, equipmentSet, usedNames);
-      return {pattern: pattern, name: ex.n, scheme: schemeFor(pattern, sets), minutes: estimateExerciseMinutes(pattern, sets)};
-    });
+    var items = [];
+    var remaining = mainBudget;
+
+    for (var p = 0; p < pairs.length; p++){
+      var pair = pairs[p];
+      var pairCost = sets * (40 + transitionRest + 40 + mainRest) / 60;
+      if (remaining < pairCost) break;
+      var exA = pickExercise(pair[0], equipmentSet, usedNames);
+      var exB = pickExercise(pair[1], equipmentSet, usedNames);
+      items.push({
+        pattern: pair[0],
+        name: exA.n,
+        scheme: sets + " × 8–12 · repos " + transitionRest + " s (enchaîné)",
+        minutes: sets * (40 + transitionRest) / 60,
+        pairNote: "⇄ Superset avec " + PATTERN_META[pair[1]].label
+      });
+      items.push({
+        pattern: pair[1],
+        name: exB.n,
+        scheme: sets + " × 8–12 · repos " + mainRest + " s",
+        minutes: sets * (40 + mainRest) / 60,
+        pairNote: "⇄ Superset avec " + PATTERN_META[pair[0]].label
+      });
+      remaining -= pairCost;
+    }
+
+    if (items.length === 0){
+      // budget too tight for even one full superset pair — fall back to a single exercise
+      var soloPattern = pairs[0][0];
+      var exSolo = pickExercise(soloPattern, equipmentSet, usedNames);
+      items.push({
+        pattern: soloPattern,
+        name: exSolo.n,
+        scheme: schemeFor(soloPattern, sets),
+        minutes: estimateExerciseMinutes(soloPattern, sets),
+        pairNote: null
+      });
+      remaining -= estimateExerciseMinutes(soloPattern, sets);
+    }
+
+    var coreCost = estimateExerciseMinutes("core", sets);
+    if (remaining >= coreCost){
+      var exCore = pickExercise("core", equipmentSet, usedNames);
+      items.push({
+        pattern: "core",
+        name: exCore.n,
+        scheme: schemeFor("core", sets),
+        minutes: coreCost,
+        pairNote: null
+      });
+    }
 
     renderResults(items, sets);
   }
@@ -965,6 +1013,7 @@
           '<span class="item-tag" style="color:var(' + meta.varName + ')"><span class="dot" style="background:var(' + meta.varName + ')"></span>' + meta.label + '</span>' +
           '<div class="item-name">' + it.name + '</div>' +
           '<div class="item-scheme">' + it.scheme + '</div>' +
+          (it.pairNote ? '<div class="item-pairnote">' + it.pairNote + '</div>' : '') +
         '</div>';
       sessionList.appendChild(row);
     });
