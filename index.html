@@ -144,7 +144,15 @@
   .app-header{
     display:flex;
     align-items:center;
+    flex-wrap:wrap;
+    row-gap:8px;
     gap:14px;
+  }
+  .header-controls{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    flex:none;
   }
   .mark{
     width:46px;height:46px;
@@ -188,6 +196,20 @@
   }
   .history-btn svg{width:17px;height:17px;}
   .history-btn.active{background:var(--ink); color:var(--bg); border-color:var(--ink);}
+  .lang-toggle{display:inline-flex; align-items:center; gap:2px; background:var(--surface-2); border:1px solid var(--line); border-radius:20px; padding:3px; flex:none;}
+  .lang-btn{
+    font-family:var(--font-mono);
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:0.02em;
+    border:none;
+    background:none;
+    color:var(--ink-muted);
+    padding:6px 9px;
+    border-radius:16px;
+    cursor:pointer;
+  }
+  .lang-btn.active{background:var(--ink); color:var(--bg);}
 
   /* history */
   #historySection.hidden{display:none;}
@@ -793,38 +815,44 @@
         <div class="tagline">Séance sur mesure en 1 shake</div>
       </div>
     </div>
-    <button class="history-btn" type="button" id="historyToggleBtn" aria-label="Historique des séances" title="Historique">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>
-    </button>
-    <div class="theme-toggle" id="theme-toggle">
-      <button class="theme-btn" type="button" data-theme-choice="light" aria-label="Thème clair" title="Clair">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2 12h2.5M19.5 12H22M4.2 19.8L6 18M18 6l1.8-1.8"/></svg>
+    <div class="header-controls">
+      <button class="history-btn" type="button" id="historyToggleBtn" aria-label="Historique des séances" title="Historique">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>
       </button>
-      <button class="theme-btn" type="button" data-theme-choice="system" aria-label="Thème système" title="Auto">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4.5" width="18" height="12" rx="2"/><path d="M8 20h8M12 16.5V20" stroke-linecap="round"/></svg>
-      </button>
-      <button class="theme-btn" type="button" data-theme-choice="dark" aria-label="Thème sombre" title="Sombre">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5Z"/></svg>
-      </button>
+      <div class="lang-toggle" id="lang-toggle">
+        <button class="lang-btn" type="button" data-lang-choice="fr" aria-label="Français">FR</button>
+        <button class="lang-btn" type="button" data-lang-choice="en" aria-label="English">EN</button>
+      </div>
+      <div class="theme-toggle" id="theme-toggle">
+        <button class="theme-btn" type="button" data-theme-choice="light" aria-label="Thème clair" title="Clair">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2 12h2.5M19.5 12H22M4.2 19.8L6 18M18 6l1.8-1.8"/></svg>
+        </button>
+        <button class="theme-btn" type="button" data-theme-choice="system" aria-label="Thème système" title="Auto">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4.5" width="18" height="12" rx="2"/><path d="M8 20h8M12 16.5V20" stroke-linecap="round"/></svg>
+        </button>
+        <button class="theme-btn" type="button" data-theme-choice="dark" aria-label="Thème sombre" title="Sombre">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5Z"/></svg>
+        </button>
+      </div>
     </div>
   </header>
 
   <section class="card hidden" id="historySection">
     <div class="card-label">
-      <span>Historique des séances</span>
+      <span id="historyTitleText">Historique des séances</span>
       <button type="button" id="historyClearBtn" class="text-btn">Effacer</button>
     </div>
     <div class="history-list" id="historyList"></div>
   </section>
 
   <section class="card">
-    <div class="card-label">Équipement disponible</div>
+    <div class="card-label" id="equipmentLabel">Équipement disponible</div>
     <div class="chip-grid" id="equipmentGrid"></div>
   </section>
 
   <section class="card">
     <div class="card-label">
-      <span>Exercices exclus</span>
+      <span id="excludeLabelText">Exercices exclus</span>
       <button type="button" id="excludeToggleBtn" class="text-btn">Gérer</button>
     </div>
     <p class="exclude-hint" id="excludeSummary">Aucun exercice exclu.</p>
@@ -832,22 +860,22 @@
   </section>
 
   <section class="card">
-    <div class="card-label">Zone de travail</div>
+    <div class="card-label" id="zoneLabelText">Zone de travail</div>
     <div class="segmented" id="zoneGrid"></div>
   </section>
 
   <section class="card">
-    <div class="card-label">Niveau</div>
+    <div class="card-label" id="levelLabelText">Niveau</div>
     <div class="segmented segmented-3" id="difficultyGrid"></div>
   </section>
 
   <section class="card">
     <div class="card-label">
-      <span>Durée</span>
+      <span id="durationLabelText">Durée</span>
     </div>
     <div class="duration-row">
       <button class="stepper" id="durMinus" type="button" aria-label="Réduire la durée">–</button>
-      <div class="duration-readout" id="durationReadout">45<small>minutes</small></div>
+      <div class="duration-readout" id="durationReadout">45<small id="durationUnit">minutes</small></div>
       <button class="stepper" id="durPlus" type="button" aria-label="Augmenter la durée">+</button>
     </div>
     <input type="range" id="durationRange" min="15" max="75" step="5" value="45" aria-label="Durée de la séance en minutes">
@@ -855,11 +883,11 @@
 
   <section class="card">
     <div class="card-label">
-      <span>Repos entre séries</span>
+      <span id="restLabelText">Repos entre séries</span>
     </div>
     <div class="duration-row">
       <button class="stepper" id="restMinus" type="button" aria-label="Réduire le repos">–</button>
-      <div class="duration-readout" id="restReadout">120<small>secondes</small></div>
+      <div class="duration-readout" id="restReadout">120<small id="restUnit">secondes</small></div>
       <button class="stepper" id="restPlus" type="button" aria-label="Augmenter le repos">+</button>
     </div>
     <input type="range" id="restRange" min="60" max="180" step="15" value="120" aria-label="Repos entre séries en secondes">
@@ -869,9 +897,9 @@
     <button id="checkBtn" type="button">
       <img class="check-logo" src="/logo.png" alt="" aria-hidden="true">
       <span class="big">SHAKE</span>
-      <span class="small">Générer la séance</span>
+      <span class="small" id="shakeSmallText">Générer la séance</span>
     </button>
-    <p class="shake-hint">Secouez votre téléphone pour générer une nouvelle séance à tout moment.</p>
+    <p class="shake-hint" id="shakeHintText">Secouez votre téléphone pour générer une nouvelle séance à tout moment.</p>
     <button id="shakeEnableBtn" type="button" hidden>Activer la détection de secousse</button>
   </div>
 
@@ -897,14 +925,14 @@
       <div class="player-scheme" id="playerScheme"></div>
       <div class="item-pairnote" id="playerPairnote"></div>
       <div class="player-weight-row" id="playerWeightRow">
-        <label for="playerWeight">Charge (kg, optionnel)</label>
+        <label for="playerWeight" id="playerWeightLabel">Charge (kg, optionnel)</label>
         <input type="number" inputmode="decimal" min="0" step="0.5" id="playerWeight" placeholder="—">
       </div>
       <button type="button" id="playerSwapBtn" class="player-swap-btn">🔄 Changer d'exercice</button>
     </div>
 
     <div class="player-rest hidden" id="playerRest">
-      <div class="player-rest-label">Repos</div>
+      <div class="player-rest-label" id="playerRestLabel">Repos</div>
       <div class="player-rest-count" id="playerRestCount">20</div>
       <div class="player-rest-next" id="playerRestNext"></div>
       <button type="button" id="playerSkipRestBtn" class="player-quit-btn">Passer le repos</button>
@@ -914,43 +942,169 @@
     <button id="playerQuitBtn" type="button" class="player-quit-btn">Quitter la séance</button>
 
     <div class="player-done" id="playerDone" hidden>
-      <div class="player-done-title">Séance terminée 🎉</div>
-      <p class="player-done-sub">Bien joué. Repos bien mérité.</p>
+      <div class="player-done-title" id="playerDoneTitle">Séance terminée 🎉</div>
+      <p class="player-done-sub" id="playerDoneSub">Bien joué. Repos bien mérité.</p>
       <button id="playerCloseBtn" type="button" class="player-quit-btn">Fermer</button>
     </div>
   </section>
 
-  <p class="footnote">Shaker choisit à chaque fois une combinaison différente selon ton équipement, la zone visée et le temps disponible.</p>
+  <p class="footnote" id="footnoteText">Shaker choisit à chaque fois une combinaison différente selon ton équipement, la zone visée et le temps disponible.</p>
 </main>
 
 <script>
 (function(){
   "use strict";
 
+  // ---------- language (FR default / EN) ----------
+  var STRINGS = {
+    fr: {
+      tagline: "Séance sur mesure en 1 shake",
+      equipmentLabel: "Équipement disponible",
+      excludeLabel: "Exercices exclus",
+      manage: "Gérer",
+      close: "Fermer",
+      excludeEmpty: "Aucun exercice exclu.",
+      excludeSummary: function(n){ return n + " exercice" + (n > 1 ? "s" : "") + " exclu" + (n > 1 ? "s" : "") + " de la génération."; },
+      zoneLabel: "Zone de travail",
+      levelLabel: "Niveau",
+      durationLabel: "Durée",
+      minutesUnit: "minutes",
+      restLabel: "Repos entre séries",
+      secondsUnit: "secondes",
+      shakeSmall: "Générer la séance",
+      shakeHint: "Secouez votre téléphone pour générer une nouvelle séance à tout moment.",
+      shakeEnable: "Activer la détection de secousse",
+      shakeEnabled: "Détection de secousse activée",
+      shakeDenied: "Autorisation refusée — utilise SHAKE",
+      shakeUnavailable: "Indisponible — utilise SHAKE",
+      stepProgress: function(i, total){ return "Étape " + i + " / " + total; },
+      estimateText: function(mins, requested){ return "≈ " + mins + " min estimées (" + requested + " min demandées)"; },
+      coherenceShort: function(labels){ return "Séance courte : " + labels + ". Choisis plus de temps pour couvrir tous les patterns."; },
+      zoneNoteFull: "Séance équilibrée en supersets antagonistes : squat/hinge puis push/pull, gainage en finisher.",
+      zoneNoteUpper: "Focus haut du corps en superset antagoniste push/pull, fini par le gainage.",
+      zoneNoteLower: "Focus bas du corps en superset antagoniste squat/hinge, fini par le gainage.",
+      startSessionBtn: "Démarrer la séance",
+      shareSessionBtn: "Partager cette séance",
+      shareCopied: "Copié dans le presse-papiers ✓",
+      shareCopyFailed: "Impossible de copier automatiquement",
+      shareTitle: "Séance Shaker",
+      shareHeader: function(zone, duration){ return "Séance Shaker — " + zone + " · " + duration + " min"; },
+      warmupName: "Échauffement",
+      warmupScheme: "5 min · mobilité générale + activation",
+      cooldownName: "Retour au calme",
+      cooldownScheme: "3 min · étirements",
+      setWord: "Série",
+      restWord: "repos",
+      enchaineSuffix: "(enchaîné)",
+      supersetWith: "⇄ Superset avec",
+      playerValidate: "✓ Valider",
+      playerFinish: "✓ Terminer",
+      playerQuit: "Quitter la séance",
+      playerSwap: "🔄 Changer d'exercice",
+      playerWeightLabel: "Charge (kg, optionnel)",
+      playerRestLabel: "Repos",
+      playerRestNext: function(name){ return "Ensuite : " + name; },
+      playerSkipRest: "Passer le repos",
+      playerDoneTitle: "Séance terminée 🎉",
+      playerDoneSub: "Bien joué. Repos bien mérité.",
+      playerClose: "Fermer",
+      historyAria: "Historique des séances",
+      historyTitle: "Historique des séances",
+      historyClear: "Effacer",
+      historyEmpty: "Aucune séance enregistrée pour le moment. Termine une séance pour qu'elle apparaisse ici.",
+      footnote: "Shaker choisit à chaque fois une combinaison différente selon ton équipement, la zone visée et le temps disponible.",
+      themeLight: "Clair", themeAuto: "Auto", themeDark: "Sombre",
+      themeLightAria: "Thème clair", themeAutoAria: "Thème système", themeDarkAria: "Thème sombre"
+    },
+    en: {
+      tagline: "Custom workout in one shake",
+      equipmentLabel: "Available equipment",
+      excludeLabel: "Excluded exercises",
+      manage: "Manage",
+      close: "Close",
+      excludeEmpty: "No excluded exercises.",
+      excludeSummary: function(n){ return n + " exercise" + (n > 1 ? "s" : "") + " excluded from generation."; },
+      zoneLabel: "Target area",
+      levelLabel: "Level",
+      durationLabel: "Duration",
+      minutesUnit: "minutes",
+      restLabel: "Rest between sets",
+      secondsUnit: "seconds",
+      shakeSmall: "Generate workout",
+      shakeHint: "Shake your phone to generate a new workout anytime.",
+      shakeEnable: "Enable shake detection",
+      shakeEnabled: "Shake detection enabled",
+      shakeDenied: "Permission denied — use SHAKE",
+      shakeUnavailable: "Unavailable — use SHAKE",
+      stepProgress: function(i, total){ return "Step " + i + " / " + total; },
+      estimateText: function(mins, requested){ return "≈ " + mins + " min estimated (" + requested + " min requested)"; },
+      coherenceShort: function(labels){ return "Short session: " + labels + ". Choose more time to cover all patterns."; },
+      zoneNoteFull: "Balanced session in antagonist supersets: squat/hinge then push/pull, core to finish.",
+      zoneNoteUpper: "Upper body focus in a push/pull antagonist superset, finished with core.",
+      zoneNoteLower: "Lower body focus in a squat/hinge antagonist superset, finished with core.",
+      startSessionBtn: "Start workout",
+      shareSessionBtn: "Share this workout",
+      shareCopied: "Copied to clipboard ✓",
+      shareCopyFailed: "Couldn't copy automatically",
+      shareTitle: "Shaker workout",
+      shareHeader: function(zone, duration){ return "Shaker workout — " + zone + " · " + duration + " min"; },
+      warmupName: "Warm-up",
+      warmupScheme: "5 min · general mobility + activation",
+      cooldownName: "Cool-down",
+      cooldownScheme: "3 min · stretching",
+      setWord: "Set",
+      restWord: "rest",
+      enchaineSuffix: "(paired)",
+      supersetWith: "⇄ Superset with",
+      playerValidate: "✓ Validate",
+      playerFinish: "✓ Finish",
+      playerQuit: "Quit workout",
+      playerSwap: "🔄 Swap exercise",
+      playerWeightLabel: "Load (kg, optional)",
+      playerRestLabel: "Rest",
+      playerRestNext: function(name){ return "Next: " + name; },
+      playerSkipRest: "Skip rest",
+      playerDoneTitle: "Workout complete 🎉",
+      playerDoneSub: "Well done. Rest well-earned.",
+      playerClose: "Close",
+      historyAria: "Workout history",
+      historyTitle: "Workout history",
+      historyClear: "Clear",
+      historyEmpty: "No workout recorded yet. Finish a workout for it to show up here.",
+      footnote: "Shaker picks a different combination each time based on your equipment, target area and available time.",
+      themeLight: "Light", themeAuto: "Auto", themeDark: "Dark",
+      themeLightAria: "Light theme", themeAutoAria: "System theme", themeDarkAria: "Dark theme"
+    }
+  };
+  function T(){ return STRINGS[state.lang]; }
+
   var EQUIPMENT_OPTIONS = [
-    {id:"bodyweight", label:"Poids du corps"},
-    {id:"dumbbell",   label:"Haltères"},
-    {id:"barbell",    label:"Barre"},
-    {id:"kettlebell", label:"Kettlebell"},
-    {id:"band",       label:"Élastiques"},
-    {id:"bench",      label:"Banc"},
-    {id:"pullupbar",  label:"Barre de traction"},
-    {id:"cable",      label:"Poulie"},
-    {id:"machine",    label:"Machines guidées"}
+    {id:"bodyweight", fr:"Poids du corps",     en:"Bodyweight"},
+    {id:"dumbbell",   fr:"Haltères",           en:"Dumbbells"},
+    {id:"barbell",    fr:"Barre",              en:"Barbell"},
+    {id:"kettlebell", fr:"Kettlebell",         en:"Kettlebell"},
+    {id:"band",       fr:"Élastiques",         en:"Bands"},
+    {id:"bench",      fr:"Banc",               en:"Bench"},
+    {id:"pullupbar",  fr:"Barre de traction",  en:"Pull-up bar"},
+    {id:"cable",      fr:"Poulie",             en:"Cable"},
+    {id:"machine",    fr:"Machines guidées",   en:"Machines"}
   ];
 
   var ZONE_OPTIONS = [
-    {id:"full",  label:"Full body"},
-    {id:"upper", label:"Haut du corps"},
-    {id:"lower", label:"Bas du corps"},
-    {id:"any",   label:"Peu importe"}
+    {id:"full",  fr:"Full body",       en:"Full body"},
+    {id:"upper", fr:"Haut du corps",   en:"Upper body"},
+    {id:"lower", fr:"Bas du corps",    en:"Lower body"},
+    {id:"any",   fr:"Peu importe",     en:"Any"}
   ];
-  var ZONE_LABELS = {full:"Full body", upper:"Haut du corps", lower:"Bas du corps", any:"Peu importe"};
+  function zoneLabel(id){
+    var opt = ZONE_OPTIONS.filter(function(o){ return o.id === id; })[0];
+    return opt ? opt[state.lang] : id;
+  }
 
   var DIFFICULTY_OPTIONS = [
-    {id:"beginner",     label:"Débutant"},
-    {id:"intermediate", label:"Intermédiaire"},
-    {id:"advanced",     label:"Avancé"}
+    {id:"beginner",     fr:"Débutant",       en:"Beginner"},
+    {id:"intermediate", fr:"Intermédiaire",  en:"Intermediate"},
+    {id:"advanced",     fr:"Avancé",         en:"Advanced"}
   ];
 
   var PATTERN_META = {
@@ -979,74 +1133,74 @@
   // name, pattern, required equipment (empty = bodyweight only)
   var EXERCISES = [
     // PUSH
-    {n:"Pompes", p:"push", e:[], d:1},
-    {n:"Pompes diamant", p:"push", e:[], d:2},
-    {n:"Pompes pike (épaules)", p:"push", e:[], d:2},
-    {n:"Pompes surélevées", p:"push", e:["bench"], d:2},
-    {n:"Dips sur banc", p:"push", e:["bench"], d:2},
-    {n:"Développé couché haltères", p:"push", e:["dumbbell","bench"], d:2},
-    {n:"Développé militaire haltères", p:"push", e:["dumbbell"], d:2},
-    {n:"Développé couché barre", p:"push", e:["barbell","bench"], d:3},
-    {n:"Développé militaire barre", p:"push", e:["barbell"], d:3},
-    {n:"Développé kettlebell", p:"push", e:["kettlebell"], d:2},
-    {n:"Pompes lestées élastique", p:"push", e:["band"], d:1},
-    {n:"Développé poulie haute", p:"push", e:["cable"], d:2},
-    {n:"Presse à pectoraux (machine)", p:"push", e:["machine"], d:1},
-    {n:"Développé épaules (machine)", p:"push", e:["machine"], d:1},
+    {n:"Pompes", p:"push", e:[], d:1, n_en:"Push-ups"},
+    {n:"Pompes diamant", p:"push", e:[], d:2, n_en:"Diamond push-ups"},
+    {n:"Pompes pike (épaules)", p:"push", e:[], d:2, n_en:"Pike push-ups (shoulders)"},
+    {n:"Pompes surélevées", p:"push", e:["bench"], d:2, n_en:"Incline push-ups"},
+    {n:"Dips sur banc", p:"push", e:["bench"], d:2, n_en:"Bench dips"},
+    {n:"Développé couché haltères", p:"push", e:["dumbbell","bench"], d:2, n_en:"Dumbbell bench press"},
+    {n:"Développé militaire haltères", p:"push", e:["dumbbell"], d:2, n_en:"Dumbbell shoulder press"},
+    {n:"Développé couché barre", p:"push", e:["barbell","bench"], d:3, n_en:"Barbell bench press"},
+    {n:"Développé militaire barre", p:"push", e:["barbell"], d:3, n_en:"Barbell overhead press"},
+    {n:"Développé kettlebell", p:"push", e:["kettlebell"], d:2, n_en:"Kettlebell press"},
+    {n:"Pompes lestées élastique", p:"push", e:["band"], d:1, n_en:"Band-resisted push-ups"},
+    {n:"Développé poulie haute", p:"push", e:["cable"], d:2, n_en:"Cable chest press"},
+    {n:"Presse à pectoraux (machine)", p:"push", e:["machine"], d:1, n_en:"Chest press (machine)"},
+    {n:"Développé épaules (machine)", p:"push", e:["machine"], d:1, n_en:"Shoulder press (machine)"},
 
     // PULL
-    {n:"Rowing inversé (sous table)", p:"pull", e:[], d:1},
-    {n:"Tractions", p:"pull", e:["pullupbar"], d:2},
-    {n:"Tractions australiennes", p:"pull", e:["pullupbar"], d:2},
-    {n:"Rowing haltère unilatéral", p:"pull", e:["dumbbell"], d:3},
-    {n:"Rowing barre", p:"pull", e:["barbell"], d:3},
-    {n:"Rowing kettlebell", p:"pull", e:["kettlebell"], d:2},
-    {n:"Tirage élastique buste penché", p:"pull", e:["band"], d:1},
-    {n:"Face pull élastique", p:"pull", e:["band"], d:1},
-    {n:"Tirage vertical poulie", p:"pull", e:["cable"], d:2},
-    {n:"Tirage horizontal poulie", p:"pull", e:["cable"], d:2},
-    {n:"Rowing (machine)", p:"pull", e:["machine"], d:1},
-    {n:"Tirage nuque (machine)", p:"pull", e:["machine"], d:1},
+    {n:"Rowing inversé (sous table)", p:"pull", e:[], d:1, n_en:"Inverted row (under table)"},
+    {n:"Tractions", p:"pull", e:["pullupbar"], d:2, n_en:"Pull-ups"},
+    {n:"Tractions australiennes", p:"pull", e:["pullupbar"], d:2, n_en:"Australian pull-ups"},
+    {n:"Rowing haltère unilatéral", p:"pull", e:["dumbbell"], d:3, n_en:"Single-arm dumbbell row"},
+    {n:"Rowing barre", p:"pull", e:["barbell"], d:3, n_en:"Barbell row"},
+    {n:"Rowing kettlebell", p:"pull", e:["kettlebell"], d:2, n_en:"Kettlebell row"},
+    {n:"Tirage élastique buste penché", p:"pull", e:["band"], d:1, n_en:"Bent-over band row"},
+    {n:"Face pull élastique", p:"pull", e:["band"], d:1, n_en:"Band face pull"},
+    {n:"Tirage vertical poulie", p:"pull", e:["cable"], d:2, n_en:"Cable lat pulldown"},
+    {n:"Tirage horizontal poulie", p:"pull", e:["cable"], d:2, n_en:"Cable seated row"},
+    {n:"Rowing (machine)", p:"pull", e:["machine"], d:1, n_en:"Row (machine)"},
+    {n:"Tirage nuque (machine)", p:"pull", e:["machine"], d:1, n_en:"Lat pulldown (machine)"},
 
     // HINGE
-    {n:"Pont fessier", p:"hinge", e:[], d:1},
-    {n:"Good morning au poids du corps", p:"hinge", e:[], d:1},
-    {n:"Soulevé de terre jambe tendue (unilatéral)", p:"hinge", e:[], d:2},
-    {n:"Soulevé de terre roumain haltères", p:"hinge", e:["dumbbell"], d:2},
-    {n:"Hip thrust haltère", p:"hinge", e:["dumbbell","bench"], d:2},
-    {n:"Soulevé de terre roumain kettlebell", p:"hinge", e:["kettlebell"], d:2},
-    {n:"Swing kettlebell", p:"hinge", e:["kettlebell"], d:2},
-    {n:"Soulevé de terre barre", p:"hinge", e:["barbell"], d:3},
-    {n:"Hip thrust barre", p:"hinge", e:["barbell","bench"], d:3},
-    {n:"Good morning élastique", p:"hinge", e:["band"], d:1},
-    {n:"Extension lombaire (machine)", p:"hinge", e:["machine"], d:1},
+    {n:"Pont fessier", p:"hinge", e:[], d:1, n_en:"Glute bridge"},
+    {n:"Good morning au poids du corps", p:"hinge", e:[], d:1, n_en:"Bodyweight good morning"},
+    {n:"Soulevé de terre jambe tendue (unilatéral)", p:"hinge", e:[], d:2, n_en:"Single-leg straight-leg deadlift"},
+    {n:"Soulevé de terre roumain haltères", p:"hinge", e:["dumbbell"], d:2, n_en:"Dumbbell Romanian deadlift"},
+    {n:"Hip thrust haltère", p:"hinge", e:["dumbbell","bench"], d:2, n_en:"Dumbbell hip thrust"},
+    {n:"Soulevé de terre roumain kettlebell", p:"hinge", e:["kettlebell"], d:2, n_en:"Kettlebell Romanian deadlift"},
+    {n:"Swing kettlebell", p:"hinge", e:["kettlebell"], d:2, n_en:"Kettlebell swing"},
+    {n:"Soulevé de terre barre", p:"hinge", e:["barbell"], d:3, n_en:"Barbell deadlift"},
+    {n:"Hip thrust barre", p:"hinge", e:["barbell","bench"], d:3, n_en:"Barbell hip thrust"},
+    {n:"Good morning élastique", p:"hinge", e:["band"], d:1, n_en:"Band good morning"},
+    {n:"Extension lombaire (machine)", p:"hinge", e:["machine"], d:1, n_en:"Lower back extension (machine)"},
 
     // SQUAT
-    {n:"Squat au poids du corps", p:"squat", e:[], d:1},
-    {n:"Squat sauté", p:"squat", e:[], d:2},
-    {n:"Fentes marchées", p:"squat", e:[], d:1},
-    {n:"Squat bulgare (banc)", p:"squat", e:["bench"], d:3},
-    {n:"Squat goblet haltère", p:"squat", e:["dumbbell"], d:2},
-    {n:"Fentes haltères", p:"squat", e:["dumbbell"], d:2},
-    {n:"Squat goblet kettlebell", p:"squat", e:["kettlebell"], d:2},
-    {n:"Squat arrière barre", p:"squat", e:["barbell"], d:3},
-    {n:"Front squat barre", p:"squat", e:["barbell"], d:3},
-    {n:"Squat élastique", p:"squat", e:["band"], d:1},
-    {n:"Presse à cuisses (machine)", p:"squat", e:["machine"], d:1},
-    {n:"Extension jambes (machine)", p:"squat", e:["machine"], d:1},
+    {n:"Squat au poids du corps", p:"squat", e:[], d:1, n_en:"Bodyweight squat"},
+    {n:"Squat sauté", p:"squat", e:[], d:2, n_en:"Jump squat"},
+    {n:"Fentes marchées", p:"squat", e:[], d:1, n_en:"Walking lunges"},
+    {n:"Squat bulgare (banc)", p:"squat", e:["bench"], d:3, n_en:"Bulgarian split squat (bench)"},
+    {n:"Squat goblet haltère", p:"squat", e:["dumbbell"], d:2, n_en:"Dumbbell goblet squat"},
+    {n:"Fentes haltères", p:"squat", e:["dumbbell"], d:2, n_en:"Dumbbell lunges"},
+    {n:"Squat goblet kettlebell", p:"squat", e:["kettlebell"], d:2, n_en:"Kettlebell goblet squat"},
+    {n:"Squat arrière barre", p:"squat", e:["barbell"], d:3, n_en:"Barbell back squat"},
+    {n:"Front squat barre", p:"squat", e:["barbell"], d:3, n_en:"Barbell front squat"},
+    {n:"Squat élastique", p:"squat", e:["band"], d:1, n_en:"Band squat"},
+    {n:"Presse à cuisses (machine)", p:"squat", e:["machine"], d:1, n_en:"Leg press (machine)"},
+    {n:"Extension jambes (machine)", p:"squat", e:["machine"], d:1, n_en:"Leg extension (machine)"},
 
     // CORE
-    {n:"Planche", p:"core", e:[], d:1},
-    {n:"Planche latérale", p:"core", e:[], d:1},
-    {n:"Mountain climbers", p:"core", e:[], d:1},
-    {n:"Crunch vélo", p:"core", e:[], d:1},
-    {n:"Relevé de jambes", p:"core", e:[], d:1},
-    {n:"Dead bug", p:"core", e:[], d:1},
-    {n:"Russian twist haltère", p:"core", e:["dumbbell"], d:2},
-    {n:"Russian twist kettlebell", p:"core", e:["kettlebell"], d:2},
-    {n:"Gainage lesté", p:"core", e:["dumbbell"], d:2},
-    {n:"Pallof press élastique", p:"core", e:["band"], d:1},
-    {n:"Pallof press poulie", p:"core", e:["cable"], d:2}
+    {n:"Planche", p:"core", e:[], d:1, n_en:"Plank"},
+    {n:"Planche latérale", p:"core", e:[], d:1, n_en:"Side plank"},
+    {n:"Mountain climbers", p:"core", e:[], d:1, n_en:"Mountain climbers"},
+    {n:"Crunch vélo", p:"core", e:[], d:1, n_en:"Bicycle crunch"},
+    {n:"Relevé de jambes", p:"core", e:[], d:1, n_en:"Leg raises"},
+    {n:"Dead bug", p:"core", e:[], d:1, n_en:"Dead bug"},
+    {n:"Russian twist haltère", p:"core", e:["dumbbell"], d:2, n_en:"Dumbbell Russian twist"},
+    {n:"Russian twist kettlebell", p:"core", e:["kettlebell"], d:2, n_en:"Kettlebell Russian twist"},
+    {n:"Gainage lesté", p:"core", e:["dumbbell"], d:2, n_en:"Weighted plank"},
+    {n:"Pallof press élastique", p:"core", e:["band"], d:1, n_en:"Band Pallof press"},
+    {n:"Pallof press poulie", p:"core", e:["cable"], d:2, n_en:"Cable Pallof press"}
   ];
 
   var state = {
@@ -1055,7 +1209,8 @@
     duration: 45,
     restSeconds: 120,
     difficulty: "intermediate",
-    excluded: new Set()
+    excluded: new Set(),
+    lang: "fr"
   };
 
   try {
@@ -1078,6 +1233,9 @@
     if (saved && Array.isArray(saved.excluded)) {
       state.excluded = new Set(saved.excluded);
     }
+    if (saved && ["fr","en"].indexOf(saved.lang) !== -1) {
+      state.lang = saved.lang;
+    }
   } catch (err) {}
 
   function persist(){
@@ -1088,7 +1246,8 @@
         duration: state.duration,
         restSeconds: state.restSeconds,
         difficulty: state.difficulty,
-        excluded: Array.from(state.excluded)
+        excluded: Array.from(state.excluded),
+        lang: state.lang
       }));
     } catch (err) {}
   }
@@ -1114,7 +1273,7 @@
     var hist = loadHistory();
     if (!hist.length) return new Set();
     var names = new Set();
-    hist[0].exercises.forEach(function(ex){ names.add(ex.name); });
+    hist[0].exercises.forEach(function(ex){ names.add(ex.nameKey || ex.name); });
     return names;
   }
 
@@ -1151,7 +1310,7 @@
     chip.type = "button";
     chip.className = "chip";
     chip.dataset.id = opt.id;
-    chip.innerHTML = '<span class="box"><svg viewBox="0 0 10 10" fill="none"><path d="M1 5L4 8L9 2" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span>' + opt.label + '</span>';
+    chip.innerHTML = '<span class="box"><svg viewBox="0 0 10 10" fill="none"><path d="M1 5L4 8L9 2" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="chip-label">' + opt[state.lang] + '</span>';
     chip.addEventListener("click", function(){
       if (state.equipment.has(opt.id)) state.equipment.delete(opt.id);
       else state.equipment.add(opt.id);
@@ -1174,8 +1333,8 @@
   var excludePanelBuilt = false;
 
   function buildExcludePanel(){
-    if (excludePanelBuilt) return;
     excludePanelBuilt = true;
+    excludePanel.innerHTML = "";
     Object.keys(PATTERN_META).forEach(function(pattern){
       var group = document.createElement("div");
       var title = document.createElement("div");
@@ -1196,7 +1355,7 @@
           persist();
         });
         var span = document.createElement("span");
-        span.textContent = ex.n;
+        span.textContent = displayName(ex.n);
         label.appendChild(checkbox);
         label.appendChild(span);
         label.classList.toggle("excluded", !checkbox.checked);
@@ -1208,16 +1367,14 @@
 
   function syncExcludeSummary(){
     var n = state.excluded.size;
-    excludeSummary.textContent = n === 0
-      ? "Aucun exercice exclu."
-      : n + " exercice" + (n > 1 ? "s" : "") + " exclu" + (n > 1 ? "s" : "") + " de la génération.";
+    excludeSummary.textContent = n === 0 ? T().excludeEmpty : T().excludeSummary(n);
   }
 
   excludeToggleBtn.addEventListener("click", function(){
     buildExcludePanel();
     var willShow = excludePanel.classList.contains("hidden");
     excludePanel.classList.toggle("hidden", !willShow);
-    excludeToggleBtn.textContent = willShow ? "Fermer" : "Gérer";
+    excludeToggleBtn.textContent = willShow ? T().close : T().manage;
   });
 
   syncExcludeSummary();
@@ -1232,23 +1389,23 @@
     var hist = loadHistory();
     historyList.innerHTML = "";
     if (!hist.length) {
-      historyList.innerHTML = '<p class="history-empty">Aucune séance enregistrée pour le moment. Termine une séance pour qu\'elle apparaisse ici.</p>';
+      historyList.innerHTML = '<p class="history-empty">' + T().historyEmpty + '</p>';
       return;
     }
+    var localeTag = state.lang === "en" ? "en-GB" : "fr-FR";
     hist.forEach(function(rec){
       var d = new Date(rec.date);
-      var dateLabel = isNaN(d.getTime()) ? "" : d.toLocaleDateString("fr-FR", {day:"2-digit", month:"short", year:"numeric"}) + " · " + d.toLocaleTimeString("fr-FR", {hour:"2-digit", minute:"2-digit"});
-      var zoneLabel = ZONE_LABELS[rec.zone] || rec.zone;
+      var dateLabel = isNaN(d.getTime()) ? "" : d.toLocaleDateString(localeTag, {day:"2-digit", month:"short", year:"numeric"}) + " · " + d.toLocaleTimeString(localeTag, {hour:"2-digit", minute:"2-digit"});
       var exList = (rec.exercises || []).map(function(ex){
         var loggedWeights = (ex.weights || []).filter(function(w){ return w != null; });
         var weightsText = loggedWeights.length ? " (" + loggedWeights.map(function(w){ return w + "kg"; }).join(", ") + ")" : "";
-        return ex.name + weightsText;
+        return displayName(ex.nameKey || ex.name) + weightsText;
       }).join(" · ");
       var card = document.createElement("div");
       card.className = "history-item";
       card.innerHTML =
         '<div class="history-date">' + dateLabel + '</div>' +
-        '<div class="history-meta">' + zoneLabel + ' · ' + rec.duration + ' min</div>' +
+        '<div class="history-meta">' + zoneLabel(rec.zone) + ' · ' + rec.duration + ' min</div>' +
         '<div class="history-exercises">' + exList + '</div>';
       historyList.appendChild(card);
     });
@@ -1273,7 +1430,7 @@
     btn.type = "button";
     btn.className = "seg-btn";
     btn.dataset.id = opt.id;
-    btn.textContent = opt.label;
+    btn.textContent = opt[state.lang];
     btn.addEventListener("click", function(){
       state.zone = opt.id;
       syncZoneUI();
@@ -1294,7 +1451,7 @@
     btn.type = "button";
     btn.className = "seg-btn";
     btn.dataset.id = opt.id;
-    btn.textContent = opt.label;
+    btn.textContent = opt[state.lang];
     btn.addEventListener("click", function(){
       state.difficulty = opt.id;
       syncDifficultyUI();
@@ -1315,7 +1472,7 @@
 
   function syncDurationUI(){
     durationRange.value = state.duration;
-    durationReadout.innerHTML = state.duration + "<small>minutes</small>";
+    durationReadout.innerHTML = state.duration + '<small id="durationUnit">' + T().minutesUnit + '</small>';
   }
 
   durationRange.addEventListener("input", function(){
@@ -1340,7 +1497,7 @@
 
   function syncRestUI(){
     restRange.value = state.restSeconds;
-    restReadout.innerHTML = state.restSeconds + "<small>secondes</small>";
+    restReadout.innerHTML = state.restSeconds + '<small id="restUnit">' + T().secondsUnit + '</small>';
   }
 
   restRange.addEventListener("input", function(){
@@ -1364,6 +1521,92 @@
   syncDifficultyUI();
   syncDurationUI();
   syncRestUI();
+
+  // ---------- language toggle ----------
+  var langToggle = document.getElementById("lang-toggle");
+  var themeBtnLight = document.querySelector('.theme-btn[data-theme-choice="light"]');
+  var themeBtnAuto = document.querySelector('.theme-btn[data-theme-choice="system"]');
+  var themeBtnDark = document.querySelector('.theme-btn[data-theme-choice="dark"]');
+
+  function syncLangUI(){
+    Array.prototype.forEach.call(langToggle.children, function(btn){
+      btn.classList.toggle("active", btn.dataset.langChoice === state.lang);
+    });
+  }
+
+  function applyLanguage(){
+    document.documentElement.lang = state.lang;
+
+    document.querySelector(".tagline").textContent = T().tagline;
+    document.getElementById("equipmentLabel").textContent = T().equipmentLabel;
+    document.getElementById("excludeLabelText").textContent = T().excludeLabel;
+    document.getElementById("zoneLabelText").textContent = T().zoneLabel;
+    document.getElementById("levelLabelText").textContent = T().levelLabel;
+    document.getElementById("durationLabelText").textContent = T().durationLabel;
+    document.getElementById("restLabelText").textContent = T().restLabel;
+    syncDurationUI();
+    syncRestUI();
+    document.getElementById("shakeSmallText").textContent = T().shakeSmall;
+    document.getElementById("shakeHintText").textContent = T().shakeHint;
+    document.getElementById("shakeEnableBtn").textContent = T().shakeEnable;
+    document.getElementById("startSessionBtn").textContent = T().startSessionBtn;
+    document.getElementById("shareSessionBtn").textContent = T().shareSessionBtn;
+    document.getElementById("playerQuitBtn").textContent = T().playerQuit;
+    document.getElementById("playerCloseBtn").textContent = T().playerClose;
+    document.getElementById("playerSwapBtn").textContent = T().playerSwap;
+    document.getElementById("playerWeightLabel").textContent = T().playerWeightLabel;
+    document.getElementById("playerRestLabel").textContent = T().playerRestLabel;
+    document.getElementById("playerSkipRestBtn").textContent = T().playerSkipRest;
+    document.getElementById("playerDoneTitle").textContent = T().playerDoneTitle;
+    document.getElementById("playerDoneSub").textContent = T().playerDoneSub;
+    document.getElementById("historyTitleText").textContent = T().historyTitle;
+    document.getElementById("historyToggleBtn").setAttribute("aria-label", T().historyAria);
+    document.getElementById("historyToggleBtn").setAttribute("title", T().historyAria);
+    document.getElementById("historyClearBtn").textContent = T().historyClear;
+    document.getElementById("footnoteText").textContent = T().footnote;
+
+    themeBtnLight.setAttribute("aria-label", T().themeLightAria);
+    themeBtnLight.setAttribute("title", T().themeLight);
+    themeBtnAuto.setAttribute("aria-label", T().themeAutoAria);
+    themeBtnAuto.setAttribute("title", T().themeAuto);
+    themeBtnDark.setAttribute("aria-label", T().themeDarkAria);
+    themeBtnDark.setAttribute("title", T().themeDark);
+
+    // rebuild option labels
+    Array.prototype.forEach.call(equipmentGrid.children, function(chip, i){
+      chip.querySelector(".chip-label").textContent = EQUIPMENT_OPTIONS[i][state.lang];
+    });
+    Array.prototype.forEach.call(zoneGrid.children, function(btn, i){
+      btn.textContent = ZONE_OPTIONS[i][state.lang];
+    });
+    Array.prototype.forEach.call(difficultyGrid.children, function(btn, i){
+      btn.textContent = DIFFICULTY_OPTIONS[i][state.lang];
+    });
+
+    syncExcludeSummary();
+    excludeToggleBtn.textContent = excludePanel.classList.contains("hidden") ? T().manage : T().close;
+    if (!excludePanel.classList.contains("hidden")) buildExcludePanel();
+
+    // relabel the already-generated session (and the open player, if any)
+    // without re-randomizing the picks
+    if (currentItems.length) {
+      currentSessionSteps = buildSessionSteps(currentItems, currentSets);
+      renderSessionList(currentItems, currentSets);
+      if (!playerSection.classList.contains("hidden")) showPlayerStep();
+    }
+
+    if (!historySection.classList.contains("hidden")) renderHistory();
+
+    syncLangUI();
+  }
+
+  Array.prototype.forEach.call(langToggle.children, function(btn){
+    btn.addEventListener("click", function(){
+      state.lang = btn.dataset.langChoice;
+      persist();
+      applyLanguage();
+    });
+  });
 
   // ---------- generation logic ----------
   function computeSets(duration){
@@ -1428,8 +1671,28 @@
     return pick;
   }
 
-  function schemeFor(pattern, sets){
-    return sets + " × " + repsLabel(pattern) + " · repos " + getRest(pattern) + " s";
+  // exercise identity is always keyed by the French name (n), even in
+  // English mode — that keeps excluded/history/anti-repetition storage
+  // stable across a language switch. Display text is resolved on demand.
+  function exerciseByName(n){
+    for (var i = 0; i < EXERCISES.length; i++){
+      if (EXERCISES[i].n === n) return EXERCISES[i];
+    }
+    return null;
+  }
+  function displayName(nameKey){
+    var ex = exerciseByName(nameKey);
+    if (!ex) return nameKey;
+    return state.lang === "en" ? ex.n_en : ex.n;
+  }
+
+  function schemeFor(pattern, sets, restSeconds, suffixKey){
+    var suffix = suffixKey === "enchaine" ? " " + T().enchaineSuffix : "";
+    return sets + " × " + repsLabel(pattern) + " · " + T().restWord + " " + restSeconds + " s" + suffix;
+  }
+
+  function pairNoteFor(otherPattern){
+    return otherPattern ? (T().supersetWith + " " + PATTERN_META[otherPattern].label) : null;
   }
 
   var coverageRow = document.getElementById("coverageRow");
@@ -1439,13 +1702,13 @@
   var resultsSection = document.getElementById("results");
   var currentSessionSteps = [];
   var currentItems = [];
+  var currentSets = 0;
 
-  var ZONE_NOTE = {
-    full: "Séance équilibrée en supersets antagonistes : squat/hinge puis push/pull, gainage en finisher.",
-    any: "Séance équilibrée en supersets antagonistes : squat/hinge puis push/pull, gainage en finisher.",
-    upper: "Focus haut du corps en superset antagoniste push/pull, fini par le gainage.",
-    lower: "Focus bas du corps en superset antagoniste squat/hinge, fini par le gainage."
-  };
+  function zoneNoteText(zone){
+    if (zone === "upper") return T().zoneNoteUpper;
+    if (zone === "lower") return T().zoneNoteLower;
+    return T().zoneNoteFull;
+  }
 
   function generate(){
     var equipmentSet = state.equipment.size ? state.equipment : new Set(["bodyweight"]);
@@ -1475,22 +1738,20 @@
         items.push({
           pattern: pair[0],
           name: exA.n,
-          scheme: sets + " × " + repsLabel(pair[0]) + " · repos " + transitionRest + " s (enchaîné)",
           minutes: sets * (40 + transitionRest) / 60,
-          pairNote: "⇄ Superset avec " + PATTERN_META[pair[1]].label,
+          pairPattern: pair[1],
           sets: sets,
           restSeconds: transitionRest,
-          restLabel: " (enchaîné)"
+          restKind: "enchaine"
         });
         items.push({
           pattern: pair[1],
           name: exB.n,
-          scheme: sets + " × " + repsLabel(pair[1]) + " · repos " + mainRest + " s",
           minutes: sets * (40 + mainRest) / 60,
-          pairNote: "⇄ Superset avec " + PATTERN_META[pair[0]].label,
+          pairPattern: pair[0],
           sets: sets,
           restSeconds: mainRest,
-          restLabel: ""
+          restKind: null
         });
         remaining -= pairCost;
         addedThisLap = true;
@@ -1505,12 +1766,11 @@
       items.push({
         pattern: soloPattern,
         name: exSolo.n,
-        scheme: schemeFor(soloPattern, sets),
         minutes: estimateExerciseMinutes(soloPattern, sets),
-        pairNote: null,
+        pairPattern: null,
         sets: sets,
         restSeconds: getRest(soloPattern),
-        restLabel: ""
+        restKind: null
       });
       remaining -= estimateExerciseMinutes(soloPattern, sets);
     }
@@ -1521,21 +1781,93 @@
       items.push({
         pattern: "core",
         name: exCore.n,
-        scheme: schemeFor("core", sets),
         minutes: coreCost,
-        pairNote: null,
+        pairPattern: null,
         sets: sets,
         restSeconds: getRest("core"),
-        restLabel: ""
+        restKind: null
       });
     }
 
     renderResults(items, sets);
   }
 
-  function renderResults(items, sets){
-    currentItems = items;
-    // coverage pills
+  // rebuilds the per-set player steps from the fixed item picks — pure
+  // relabeling, safe to re-run on a language switch without re-randomizing
+  function buildSessionSteps(items, sets){
+    var steps = [];
+    steps.push({
+      type: "warmup",
+      pattern: null,
+      name: T().warmupName,
+      scheme: T().warmupScheme,
+      pairNote: null,
+      restSeconds: 0
+    });
+
+    function setScheme(it, setIndex, setCount){
+      return T().setWord + " " + setIndex + " / " + setCount + " · " + repsLabel(it.pattern) + " · " + T().restWord + " " + it.restSeconds + " s" + (it.restKind === "enchaine" ? " " + T().enchaineSuffix : "");
+    }
+
+    var idx = 0;
+    while (idx < items.length){
+      var itA = items[idx];
+      var pairedWithNext = itA.pairPattern && idx + 1 < items.length && items[idx + 1].pairPattern;
+      if (pairedWithNext){
+        var itB = items[idx + 1];
+        var setCount = itA.sets || sets;
+        for (var s = 1; s <= setCount; s++){
+          steps.push({
+            type: "exercise",
+            pattern: itA.pattern,
+            nameKey: itA.name,
+            name: displayName(itA.name),
+            scheme: setScheme(itA, s, setCount),
+            pairNote: pairNoteFor(itA.pairPattern),
+            restSeconds: itA.restSeconds
+          });
+          steps.push({
+            type: "exercise",
+            pattern: itB.pattern,
+            nameKey: itB.name,
+            name: displayName(itB.name),
+            scheme: setScheme(itB, s, setCount),
+            pairNote: pairNoteFor(itB.pairPattern),
+            restSeconds: itB.restSeconds
+          });
+        }
+        idx += 2;
+      } else {
+        var setCountSolo = itA.sets || sets;
+        for (var s2 = 1; s2 <= setCountSolo; s2++){
+          steps.push({
+            type: "exercise",
+            pattern: itA.pattern,
+            nameKey: itA.name,
+            name: displayName(itA.name),
+            scheme: setScheme(itA, s2, setCountSolo),
+            pairNote: pairNoteFor(itA.pairPattern),
+            restSeconds: itA.restSeconds
+          });
+        }
+        idx += 1;
+      }
+    }
+
+    steps.push({
+      type: "cooldown",
+      pattern: null,
+      name: T().cooldownName,
+      scheme: T().cooldownScheme,
+      pairNote: null,
+      restSeconds: 0
+    });
+    return steps;
+  }
+
+  // redraws the results card (coverage pills, session list, estimate, note)
+  // from the fixed item picks — also safe to re-run on a language switch
+  function renderSessionList(items, sets){
     var seenPatterns = [];
     items.forEach(function(it){
       if (seenPatterns.indexOf(it.pattern) === -1) seenPatterns.push(it.pattern);
@@ -1550,95 +1882,28 @@
       coverageRow.appendChild(pill);
     });
 
-    // flattened steps for the session player (warm-up → exercises → cool-down),
-    // broken down set by set (not one step per whole exercise) so the pair's
-    // A → B → A → B alternation is validated in the order it's actually done
-    currentSessionSteps = [];
-    currentSessionSteps.push({
-      type: "warmup",
-      pattern: null,
-      name: "Échauffement",
-      scheme: "5 min · mobilité générale + activation",
-      pairNote: null,
-      restSeconds: 0
-    });
-
-    function setScheme(it, setIndex, setCount){
-      return "Série " + setIndex + " / " + setCount + " · " + repsLabel(it.pattern) + " · repos " + it.restSeconds + " s" + (it.restLabel || "");
-    }
-
-    var idx = 0;
-    while (idx < items.length){
-      var itA = items[idx];
-      var pairedWithNext = itA.pairNote && idx + 1 < items.length && items[idx + 1].pairNote;
-      if (pairedWithNext){
-        var itB = items[idx + 1];
-        var setCount = itA.sets || sets;
-        for (var s = 1; s <= setCount; s++){
-          currentSessionSteps.push({
-            type: "exercise",
-            pattern: itA.pattern,
-            name: itA.name,
-            scheme: setScheme(itA, s, setCount),
-            pairNote: itA.pairNote,
-            restSeconds: itA.restSeconds
-          });
-          currentSessionSteps.push({
-            type: "exercise",
-            pattern: itB.pattern,
-            name: itB.name,
-            scheme: setScheme(itB, s, setCount),
-            pairNote: itB.pairNote,
-            restSeconds: itB.restSeconds
-          });
-        }
-        idx += 2;
-      } else {
-        var setCountSolo = itA.sets || sets;
-        for (var s2 = 1; s2 <= setCountSolo; s2++){
-          currentSessionSteps.push({
-            type: "exercise",
-            pattern: itA.pattern,
-            name: itA.name,
-            scheme: setScheme(itA, s2, setCountSolo),
-            pairNote: itA.pairNote,
-            restSeconds: itA.restSeconds
-          });
-        }
-        idx += 1;
-      }
-    }
-
-    currentSessionSteps.push({
-      type: "cooldown",
-      pattern: null,
-      name: "Retour au calme",
-      scheme: "3 min · étirements",
-      pairNote: null,
-      restSeconds: 0
-    });
-
-    // session list
     sessionList.innerHTML = "";
     var totalMinutes = 5; // warm-up
 
     var warmup = document.createElement("div");
     warmup.className = "session-item frame";
-    warmup.innerHTML = '<div class="idx">–</div><div class="item-body"><div class="item-name">Échauffement</div><div class="item-scheme">5 min · mobilité générale + activation</div></div>';
+    warmup.innerHTML = '<div class="idx">–</div><div class="item-body"><div class="item-name">' + T().warmupName + '</div><div class="item-scheme">' + T().warmupScheme + '</div></div>';
     sessionList.appendChild(warmup);
 
     items.forEach(function(it, i){
       totalMinutes += it.minutes;
       var meta = PATTERN_META[it.pattern];
+      var scheme = schemeFor(it.pattern, it.sets || sets, it.restSeconds, it.restKind);
+      var pairNote = pairNoteFor(it.pairPattern);
       var row = document.createElement("div");
       row.className = "session-item";
       row.innerHTML =
         '<div class="idx">' + (i + 1) + '</div>' +
         '<div class="item-body">' +
           '<span class="item-tag" style="color:var(' + meta.varName + ')"><span class="dot" style="background:var(' + meta.varName + ')"></span>' + meta.label + '</span>' +
-          '<div class="item-name">' + it.name + '</div>' +
-          '<div class="item-scheme">' + it.scheme + '</div>' +
-          (it.pairNote ? '<div class="item-pairnote">' + it.pairNote + '</div>' : '') +
+          '<div class="item-name">' + displayName(it.name) + '</div>' +
+          '<div class="item-scheme">' + scheme + '</div>' +
+          (pairNote ? '<div class="item-pairnote">' + pairNote + '</div>' : '') +
         '</div>';
       sessionList.appendChild(row);
     });
@@ -1646,19 +1911,25 @@
     totalMinutes += 3; // cool-down
     var cooldown = document.createElement("div");
     cooldown.className = "session-item frame";
-    cooldown.innerHTML = '<div class="idx">–</div><div class="item-body"><div class="item-name">Retour au calme</div><div class="item-scheme">3 min · étirements</div></div>';
+    cooldown.innerHTML = '<div class="idx">–</div><div class="item-body"><div class="item-name">' + T().cooldownName + '</div><div class="item-scheme">' + T().cooldownScheme + '</div></div>';
     sessionList.appendChild(cooldown);
 
-    estimateText.textContent = "≈ " + Math.round(totalMinutes) + " min estimées (" + state.duration + " min demandées)";
+    estimateText.textContent = T().estimateText(Math.round(totalMinutes), state.duration);
 
     var fullCoverage = compoundsForZone(state.zone).every(function(p){ return seenPatterns.indexOf(p) !== -1; });
     if (fullCoverage) {
-      coherenceNote.textContent = ZONE_NOTE[state.zone];
+      coherenceNote.textContent = zoneNoteText(state.zone);
     } else {
       var labels = items.map(function(it){ return PATTERN_META[it.pattern].label; });
-      coherenceNote.textContent = "Séance courte : " + labels.join(" → ") + ". Choisis plus de temps pour couvrir tous les patterns.";
+      coherenceNote.textContent = T().coherenceShort(labels.join(" → "));
     }
+  }
 
+  function renderResults(items, sets){
+    currentItems = items;
+    currentSets = sets;
+    currentSessionSteps = buildSessionSteps(items, sets);
+    renderSessionList(items, sets);
     resultsSection.classList.remove("hidden");
     playerSection.classList.add("hidden");
   }
@@ -1699,7 +1970,7 @@
     playerStep.style.display = "";
     playerValidateBtn.style.display = "";
 
-    playerProgress.textContent = "Étape " + (playerIndex + 1) + " / " + currentSessionSteps.length;
+    playerProgress.textContent = T().stepProgress(playerIndex + 1, currentSessionSteps.length);
     playerBarFill.style.width = Math.round(((playerIndex) / currentSessionSteps.length) * 100) + "%";
 
     if (step.pattern && PATTERN_META[step.pattern]) {
@@ -1722,7 +1993,7 @@
       playerSwapBtn.style.display = "";
       var lastWeight = null;
       for (var i = sessionLog.length - 1; i >= 0; i--){
-        if (sessionLog[i].name === step.name && sessionLog[i].weight != null) { lastWeight = sessionLog[i].weight; break; }
+        if (sessionLog[i].nameKey === step.nameKey && sessionLog[i].weight != null) { lastWeight = sessionLog[i].weight; break; }
       }
       playerWeight.value = lastWeight != null ? lastWeight : "";
     } else {
@@ -1730,7 +2001,7 @@
       playerSwapBtn.style.display = "none";
     }
 
-    playerValidateBtn.textContent = (playerIndex === currentSessionSteps.length - 1) ? "✓ Terminer" : "✓ Valider";
+    playerValidateBtn.textContent = (playerIndex === currentSessionSteps.length - 1) ? T().playerFinish : T().playerValidate;
   }
 
   // ----- rest countdown between sets, with sound + vibration at the end -----
@@ -1745,7 +2016,7 @@
     playerValidateBtn.style.display = "none";
     playerRest.classList.remove("hidden");
     var nextStep = currentSessionSteps[targetIndex];
-    playerRestNext.textContent = nextStep ? ("Ensuite : " + nextStep.name) : "";
+    playerRestNext.textContent = nextStep ? T().playerRestNext(nextStep.name) : "";
     playerRestCount.textContent = remaining;
     clearRestTimer();
     restTimerId = setInterval(function(){
@@ -1779,12 +2050,12 @@
     if (step.type !== "exercise") return;
     var equipmentSet = state.equipment.size ? state.equipment : new Set(["bodyweight"]);
     var usedNames = new Set();
-    currentSessionSteps.forEach(function(s){ if (s.type === "exercise") usedNames.add(s.name); });
-    usedNames.delete(step.name);
+    currentSessionSteps.forEach(function(s){ if (s.type === "exercise") usedNames.add(s.nameKey); });
+    usedNames.delete(step.nameKey);
     var maxTier = DIFFICULTY_MAX_TIER[state.difficulty] || 3;
     function baseMatch(x){
       if (x.p !== step.pattern) return false;
-      if (x.n === step.name) return false;
+      if (x.n === step.nameKey) return false;
       if (state.excluded.has(x.n)) return false;
       return x.e.every(function(eq){ return equipmentSet.has(eq); });
     }
@@ -1793,14 +2064,19 @@
     if (!pool.length) pool = EXERCISES.filter(function(x){ return baseMatch(x); });
     if (!pool.length) return; // nothing else available for this pattern/equipment
     var pick = pool[Math.floor(Math.random() * pool.length)];
-    var oldName = step.name;
-    // swap this and every remaining set of the same exercise, not just this one set
+    var oldKey = step.nameKey;
+    // swap this and every remaining set of the same exercise, not just this one set;
+    // also mirror the change into currentItems so a later language switch relabels it correctly
     for (var i = playerIndex; i < currentSessionSteps.length; i++){
       var s2 = currentSessionSteps[i];
-      if (s2.type === "exercise" && s2.pattern === step.pattern && s2.name === oldName) {
-        s2.name = pick.n;
+      if (s2.type === "exercise" && s2.pattern === step.pattern && s2.nameKey === oldKey) {
+        s2.nameKey = pick.n;
+        s2.name = displayName(pick.n);
       }
     }
+    currentItems.forEach(function(it){
+      if (it.pattern === step.pattern && it.name === oldKey) it.name = pick.n;
+    });
     showPlayerStep();
   }
 
@@ -1821,8 +2097,8 @@
     var byName = {};
     var order = [];
     sessionLog.forEach(function(e){
-      if (!byName[e.name]) { byName[e.name] = { pattern: e.pattern, name: e.name, weights: [] }; order.push(e.name); }
-      byName[e.name].weights.push(e.weight);
+      if (!byName[e.nameKey]) { byName[e.nameKey] = { pattern: e.pattern, nameKey: e.nameKey, weights: [] }; order.push(e.nameKey); }
+      byName[e.nameKey].weights.push(e.weight);
     });
     var record = {
       date: new Date().toISOString(),
@@ -1842,7 +2118,7 @@
     if (step.type === "exercise") {
       var raw = playerWeight.value;
       var w = raw !== "" ? parseFloat(raw) : NaN;
-      sessionLog.push({ pattern: step.pattern, name: step.name, weight: isNaN(w) ? null : w });
+      sessionLog.push({ pattern: step.pattern, nameKey: step.nameKey, weight: isNaN(w) ? null : w });
     }
 
     if (playerIndex >= currentSessionSteps.length - 1) {
@@ -1850,7 +2126,7 @@
       playerRest.classList.add("hidden");
       playerValidateBtn.style.display = "none";
       playerBarFill.style.width = "100%";
-      playerProgress.textContent = "Étape " + currentSessionSteps.length + " / " + currentSessionSteps.length;
+      playerProgress.textContent = T().stepProgress(currentSessionSteps.length, currentSessionSteps.length);
       playerDone.style.display = "";
       saveCompletedSession();
       return;
@@ -1882,14 +2158,16 @@
 
   function buildShareText(){
     var lines = [];
-    lines.push("Séance Shaker — " + ZONE_LABELS[state.zone] + " · " + state.duration + " min");
+    lines.push(T().shareHeader(zoneLabel(state.zone), state.duration));
     lines.push("");
-    lines.push("1. Échauffement — 5 min mobilité générale + activation");
+    lines.push("1. " + T().warmupName + " — " + T().warmupScheme);
     currentItems.forEach(function(it, i){
       var meta = PATTERN_META[it.pattern];
-      lines.push((i + 2) + ". [" + meta.label + "] " + it.name + " — " + it.scheme + (it.pairNote ? " (" + it.pairNote + ")" : ""));
+      var scheme = schemeFor(it.pattern, it.sets || currentSets, it.restSeconds, it.restKind);
+      var pairNote = pairNoteFor(it.pairPattern);
+      lines.push((i + 2) + ". [" + meta.label + "] " + displayName(it.name) + " — " + scheme + (pairNote ? " (" + pairNote + ")" : ""));
     });
-    lines.push((currentItems.length + 2) + ". Retour au calme — 3 min étirements");
+    lines.push((currentItems.length + 2) + ". " + T().cooldownName + " — " + T().cooldownScheme);
     return lines.join("\n");
   }
 
@@ -1902,14 +2180,14 @@
   shareSessionBtn.addEventListener("click", function(){
     var text = buildShareText();
     if (navigator.share) {
-      navigator.share({ title: "Séance Shaker", text: text }).catch(function(){});
+      navigator.share({ title: T().shareTitle, text: text }).catch(function(){});
       return;
     }
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(text).then(function(){
-        flashShareFeedback("Copié dans le presse-papiers ✓");
+        flashShareFeedback(T().shareCopied);
       }).catch(function(){
-        flashShareFeedback("Impossible de copier automatiquement");
+        flashShareFeedback(T().shareCopyFailed);
       });
       return;
     }
@@ -1924,9 +2202,9 @@
       ta.select();
       document.execCommand("copy");
       document.body.removeChild(ta);
-      flashShareFeedback("Copié dans le presse-papiers ✓");
+      flashShareFeedback(T().shareCopied);
     } catch (err) {
-      flashShareFeedback("Impossible de copier automatiquement");
+      flashShareFeedback(T().shareCopyFailed);
     }
   });
 
@@ -2021,6 +2299,7 @@
   });
 
   generate(); // realistic default state on load
+  applyLanguage(); // set initial UI text/labels for the saved language
 
   // ---------- shake to generate ----------
   var lastShake = 0;
@@ -2044,16 +2323,16 @@
     if (typeof DeviceMotionEvent.requestPermission === "function") {
       shakeEnableBtn.hidden = false;
       shakeEnableBtn.addEventListener("click", function(){
-        DeviceMotionEvent.requestPermission().then(function(state){
-          if (state === "granted") {
+        DeviceMotionEvent.requestPermission().then(function(permission){
+          if (permission === "granted") {
             window.addEventListener("devicemotion", handleMotion);
-            shakeEnableBtn.textContent = "Détection de secousse activée";
+            shakeEnableBtn.textContent = T().shakeEnabled;
             shakeEnableBtn.disabled = true;
           } else {
-            shakeEnableBtn.textContent = "Autorisation refusée — utilise SHAKE";
+            shakeEnableBtn.textContent = T().shakeDenied;
           }
         }).catch(function(){
-          shakeEnableBtn.textContent = "Indisponible — utilise SHAKE";
+          shakeEnableBtn.textContent = T().shakeUnavailable;
         });
       });
     } else {
