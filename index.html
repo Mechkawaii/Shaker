@@ -174,6 +174,56 @@
   .theme-btn{border:none; background:none; color:var(--ink-muted); width:26px; height:26px; border-radius:16px; display:flex; align-items:center; justify-content:center; cursor:pointer;}
   .theme-btn svg{width:14px; height:14px;}
   .theme-btn.active{background:var(--ink); color:var(--bg);}
+  .history-btn{
+    flex:none;
+    width:36px;height:36px;
+    border-radius:50%;
+    border:1px solid var(--line);
+    background:var(--surface-2);
+    color:var(--ink-muted);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+  }
+  .history-btn svg{width:17px;height:17px;}
+  .history-btn.active{background:var(--ink); color:var(--bg); border-color:var(--ink);}
+
+  /* history */
+  #historySection.hidden{display:none;}
+  .history-list{
+    display:flex;
+    flex-direction:column;
+    gap:0;
+  }
+  .history-empty{
+    font-size:13px;
+    color:var(--ink-muted);
+  }
+  .history-item{
+    padding-block:13px;
+    border-top:1px solid var(--line);
+  }
+  .history-item:first-child{border-top:none;}
+  .history-date{
+    font-family:var(--font-mono);
+    font-size:12.5px;
+    font-weight:600;
+    color:var(--ink);
+  }
+  .history-meta{
+    font-size:11.5px;
+    color:var(--ink-muted);
+    text-transform:uppercase;
+    letter-spacing:0.04em;
+    margin-top:2px;
+  }
+  .history-exercises{
+    font-size:13px;
+    color:var(--ink-muted);
+    margin-top:6px;
+    line-height:1.5;
+  }
 
   /* generic card */
   .card{
@@ -195,6 +245,56 @@
     align-items:center;
     justify-content:space-between;
   }
+  .text-btn{
+    font-family:var(--font-body);
+    font-size:11.5px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:0.04em;
+    color:var(--accent);
+    background:none;
+    border:none;
+    padding:0;
+    cursor:pointer;
+  }
+
+  /* excluded exercises */
+  .exclude-hint{
+    font-size:12.5px;
+    color:var(--ink-muted);
+  }
+  .exclude-panel{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+    max-height:340px;
+    overflow-y:auto;
+    padding-top:4px;
+    border-top:1px solid var(--line);
+  }
+  .exclude-panel.hidden{display:none;}
+  .exclude-group-title{
+    font-size:10.5px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+    color:var(--ink-muted);
+    margin-bottom:6px;
+  }
+  .exclude-item{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    font-size:13.5px;
+    padding-block:5px;
+    cursor:pointer;
+  }
+  .exclude-item input{
+    width:16px;height:16px;
+    accent-color:var(--accent);
+    flex:none;
+  }
+  .exclude-item.excluded{color:var(--ink-muted); text-decoration:line-through;}
 
   /* equipment chips */
   .chip-grid{
@@ -241,6 +341,9 @@
     display:grid;
     grid-template-columns:1fr 1fr;
     gap:8px;
+  }
+  .segmented-3{
+    grid-template-columns:1fr 1fr 1fr;
   }
   .seg-btn{
     font-family:var(--font-body);
@@ -441,6 +544,25 @@
     cursor:pointer;
   }
   .start-session-btn:active{transform:scale(0.98);}
+  .share-session-btn{
+    width:100%;
+    padding:12px;
+    border:1px solid var(--line);
+    border-radius:var(--radius-m);
+    background:none;
+    color:var(--ink-muted);
+    font-family:var(--font-body);
+    font-size:13.5px;
+    font-weight:600;
+    cursor:pointer;
+  }
+  .share-feedback{
+    font-size:12px;
+    color:var(--accent);
+    text-align:center;
+    font-weight:600;
+  }
+  .share-feedback.hidden{display:none;}
 
   /* session player */
   .player-card{gap:16px;}
@@ -512,6 +634,67 @@
     font-size:13px;
     font-weight:600;
     cursor:pointer;
+  }
+  .player-weight-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-top:4px;
+  }
+  .player-weight-row label{
+    font-size:12px;
+    color:var(--ink-muted);
+  }
+  .player-weight-row input{
+    width:84px;
+    font-family:var(--font-mono);
+    font-size:15px;
+    text-align:center;
+    color:var(--ink);
+    background:var(--surface-2);
+    border:1px solid var(--line);
+    border-radius:var(--radius-s);
+    padding:7px 4px;
+  }
+  .player-swap-btn{
+    font-family:var(--font-body);
+    font-size:12px;
+    font-weight:700;
+    color:var(--ink-muted);
+    background:none;
+    border:none;
+    padding:2px;
+    margin-top:2px;
+    cursor:pointer;
+    text-decoration:underline;
+  }
+  .player-rest{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:8px;
+    text-align:center;
+    padding-block:20px;
+  }
+  .player-rest.hidden{display:none;}
+  .player-rest-label{
+    font-size:12px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    color:var(--ink-muted);
+  }
+  .player-rest-count{
+    font-family:var(--font-display);
+    font-size:52px;
+    font-weight:800;
+    font-variant-numeric:tabular-nums;
+    color:var(--accent);
+    line-height:1;
+  }
+  .player-rest-next{
+    font-size:13px;
+    color:var(--ink-muted);
   }
   .player-done{
     display:flex;
@@ -610,6 +793,9 @@
         <div class="tagline">Séance sur mesure en 1 shake</div>
       </div>
     </div>
+    <button class="history-btn" type="button" id="historyToggleBtn" aria-label="Historique des séances" title="Historique">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>
+    </button>
     <div class="theme-toggle" id="theme-toggle">
       <button class="theme-btn" type="button" data-theme-choice="light" aria-label="Thème clair" title="Clair">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2 12h2.5M19.5 12H22M4.2 19.8L6 18M18 6l1.8-1.8"/></svg>
@@ -623,14 +809,36 @@
     </div>
   </header>
 
+  <section class="card hidden" id="historySection">
+    <div class="card-label">
+      <span>Historique des séances</span>
+      <button type="button" id="historyClearBtn" class="text-btn">Effacer</button>
+    </div>
+    <div class="history-list" id="historyList"></div>
+  </section>
+
   <section class="card">
     <div class="card-label">Équipement disponible</div>
     <div class="chip-grid" id="equipmentGrid"></div>
   </section>
 
   <section class="card">
+    <div class="card-label">
+      <span>Exercices exclus</span>
+      <button type="button" id="excludeToggleBtn" class="text-btn">Gérer</button>
+    </div>
+    <p class="exclude-hint" id="excludeSummary">Aucun exercice exclu.</p>
+    <div class="exclude-panel hidden" id="excludePanel"></div>
+  </section>
+
+  <section class="card">
     <div class="card-label">Zone de travail</div>
     <div class="segmented" id="zoneGrid"></div>
+  </section>
+
+  <section class="card">
+    <div class="card-label">Niveau</div>
+    <div class="segmented segmented-3" id="difficultyGrid"></div>
   </section>
 
   <section class="card">
@@ -675,6 +883,8 @@
       <div class="note" id="coherenceNote">Séance équilibrée : squat, hinge, push, pull et gainage.</div>
     </div>
     <button id="startSessionBtn" type="button" class="start-session-btn">Démarrer la séance</button>
+    <button id="shareSessionBtn" type="button" class="share-session-btn">Partager cette séance</button>
+    <p class="share-feedback hidden" id="shareFeedback">Copié dans le presse-papiers ✓</p>
   </section>
 
   <section class="card player-card hidden" id="playerSection">
@@ -686,6 +896,18 @@
       <div class="player-name" id="playerName">Exercice</div>
       <div class="player-scheme" id="playerScheme"></div>
       <div class="item-pairnote" id="playerPairnote"></div>
+      <div class="player-weight-row" id="playerWeightRow">
+        <label for="playerWeight">Charge (kg, optionnel)</label>
+        <input type="number" inputmode="decimal" min="0" step="0.5" id="playerWeight" placeholder="—">
+      </div>
+      <button type="button" id="playerSwapBtn" class="player-swap-btn">🔄 Changer d'exercice</button>
+    </div>
+
+    <div class="player-rest hidden" id="playerRest">
+      <div class="player-rest-label">Repos</div>
+      <div class="player-rest-count" id="playerRestCount">20</div>
+      <div class="player-rest-next" id="playerRestNext"></div>
+      <button type="button" id="playerSkipRestBtn" class="player-quit-btn">Passer le repos</button>
     </div>
 
     <button id="playerValidateBtn" type="button" class="player-validate-btn">✓ Valider</button>
@@ -723,6 +945,13 @@
     {id:"lower", label:"Bas du corps"},
     {id:"any",   label:"Peu importe"}
   ];
+  var ZONE_LABELS = {full:"Full body", upper:"Haut du corps", lower:"Bas du corps", any:"Peu importe"};
+
+  var DIFFICULTY_OPTIONS = [
+    {id:"beginner",     label:"Débutant"},
+    {id:"intermediate", label:"Intermédiaire"},
+    {id:"advanced",     label:"Avancé"}
+  ];
 
   var PATTERN_META = {
     squat:{label:"Squat", varName:"--squat"},
@@ -750,81 +979,83 @@
   // name, pattern, required equipment (empty = bodyweight only)
   var EXERCISES = [
     // PUSH
-    {n:"Pompes", p:"push", e:[]},
-    {n:"Pompes diamant", p:"push", e:[]},
-    {n:"Pompes pike (épaules)", p:"push", e:[]},
-    {n:"Pompes surélevées", p:"push", e:["bench"]},
-    {n:"Dips sur banc", p:"push", e:["bench"]},
-    {n:"Développé couché haltères", p:"push", e:["dumbbell","bench"]},
-    {n:"Développé militaire haltères", p:"push", e:["dumbbell"]},
-    {n:"Développé couché barre", p:"push", e:["barbell","bench"]},
-    {n:"Développé militaire barre", p:"push", e:["barbell"]},
-    {n:"Développé kettlebell", p:"push", e:["kettlebell"]},
-    {n:"Pompes lestées élastique", p:"push", e:["band"]},
-    {n:"Développé poulie haute", p:"push", e:["cable"]},
-    {n:"Presse à pectoraux (machine)", p:"push", e:["machine"]},
-    {n:"Développé épaules (machine)", p:"push", e:["machine"]},
+    {n:"Pompes", p:"push", e:[], d:1},
+    {n:"Pompes diamant", p:"push", e:[], d:2},
+    {n:"Pompes pike (épaules)", p:"push", e:[], d:2},
+    {n:"Pompes surélevées", p:"push", e:["bench"], d:2},
+    {n:"Dips sur banc", p:"push", e:["bench"], d:2},
+    {n:"Développé couché haltères", p:"push", e:["dumbbell","bench"], d:2},
+    {n:"Développé militaire haltères", p:"push", e:["dumbbell"], d:2},
+    {n:"Développé couché barre", p:"push", e:["barbell","bench"], d:3},
+    {n:"Développé militaire barre", p:"push", e:["barbell"], d:3},
+    {n:"Développé kettlebell", p:"push", e:["kettlebell"], d:2},
+    {n:"Pompes lestées élastique", p:"push", e:["band"], d:1},
+    {n:"Développé poulie haute", p:"push", e:["cable"], d:2},
+    {n:"Presse à pectoraux (machine)", p:"push", e:["machine"], d:1},
+    {n:"Développé épaules (machine)", p:"push", e:["machine"], d:1},
 
     // PULL
-    {n:"Rowing inversé (sous table)", p:"pull", e:[]},
-    {n:"Tractions", p:"pull", e:["pullupbar"]},
-    {n:"Tractions australiennes", p:"pull", e:["pullupbar"]},
-    {n:"Rowing haltère unilatéral", p:"pull", e:["dumbbell"]},
-    {n:"Rowing barre", p:"pull", e:["barbell"]},
-    {n:"Rowing kettlebell", p:"pull", e:["kettlebell"]},
-    {n:"Tirage élastique buste penché", p:"pull", e:["band"]},
-    {n:"Face pull élastique", p:"pull", e:["band"]},
-    {n:"Tirage vertical poulie", p:"pull", e:["cable"]},
-    {n:"Tirage horizontal poulie", p:"pull", e:["cable"]},
-    {n:"Rowing (machine)", p:"pull", e:["machine"]},
-    {n:"Tirage nuque (machine)", p:"pull", e:["machine"]},
+    {n:"Rowing inversé (sous table)", p:"pull", e:[], d:1},
+    {n:"Tractions", p:"pull", e:["pullupbar"], d:2},
+    {n:"Tractions australiennes", p:"pull", e:["pullupbar"], d:2},
+    {n:"Rowing haltère unilatéral", p:"pull", e:["dumbbell"], d:3},
+    {n:"Rowing barre", p:"pull", e:["barbell"], d:3},
+    {n:"Rowing kettlebell", p:"pull", e:["kettlebell"], d:2},
+    {n:"Tirage élastique buste penché", p:"pull", e:["band"], d:1},
+    {n:"Face pull élastique", p:"pull", e:["band"], d:1},
+    {n:"Tirage vertical poulie", p:"pull", e:["cable"], d:2},
+    {n:"Tirage horizontal poulie", p:"pull", e:["cable"], d:2},
+    {n:"Rowing (machine)", p:"pull", e:["machine"], d:1},
+    {n:"Tirage nuque (machine)", p:"pull", e:["machine"], d:1},
 
     // HINGE
-    {n:"Pont fessier", p:"hinge", e:[]},
-    {n:"Good morning au poids du corps", p:"hinge", e:[]},
-    {n:"Soulevé de terre jambe tendue (unilatéral)", p:"hinge", e:[]},
-    {n:"Soulevé de terre roumain haltères", p:"hinge", e:["dumbbell"]},
-    {n:"Hip thrust haltère", p:"hinge", e:["dumbbell","bench"]},
-    {n:"Soulevé de terre roumain kettlebell", p:"hinge", e:["kettlebell"]},
-    {n:"Swing kettlebell", p:"hinge", e:["kettlebell"]},
-    {n:"Soulevé de terre barre", p:"hinge", e:["barbell"]},
-    {n:"Hip thrust barre", p:"hinge", e:["barbell","bench"]},
-    {n:"Good morning élastique", p:"hinge", e:["band"]},
-    {n:"Extension lombaire (machine)", p:"hinge", e:["machine"]},
+    {n:"Pont fessier", p:"hinge", e:[], d:1},
+    {n:"Good morning au poids du corps", p:"hinge", e:[], d:1},
+    {n:"Soulevé de terre jambe tendue (unilatéral)", p:"hinge", e:[], d:2},
+    {n:"Soulevé de terre roumain haltères", p:"hinge", e:["dumbbell"], d:2},
+    {n:"Hip thrust haltère", p:"hinge", e:["dumbbell","bench"], d:2},
+    {n:"Soulevé de terre roumain kettlebell", p:"hinge", e:["kettlebell"], d:2},
+    {n:"Swing kettlebell", p:"hinge", e:["kettlebell"], d:2},
+    {n:"Soulevé de terre barre", p:"hinge", e:["barbell"], d:3},
+    {n:"Hip thrust barre", p:"hinge", e:["barbell","bench"], d:3},
+    {n:"Good morning élastique", p:"hinge", e:["band"], d:1},
+    {n:"Extension lombaire (machine)", p:"hinge", e:["machine"], d:1},
 
     // SQUAT
-    {n:"Squat au poids du corps", p:"squat", e:[]},
-    {n:"Squat sauté", p:"squat", e:[]},
-    {n:"Fentes marchées", p:"squat", e:[]},
-    {n:"Squat bulgare (banc)", p:"squat", e:["bench"]},
-    {n:"Squat goblet haltère", p:"squat", e:["dumbbell"]},
-    {n:"Fentes haltères", p:"squat", e:["dumbbell"]},
-    {n:"Squat goblet kettlebell", p:"squat", e:["kettlebell"]},
-    {n:"Squat arrière barre", p:"squat", e:["barbell"]},
-    {n:"Front squat barre", p:"squat", e:["barbell"]},
-    {n:"Squat élastique", p:"squat", e:["band"]},
-    {n:"Presse à cuisses (machine)", p:"squat", e:["machine"]},
-    {n:"Extension jambes (machine)", p:"squat", e:["machine"]},
+    {n:"Squat au poids du corps", p:"squat", e:[], d:1},
+    {n:"Squat sauté", p:"squat", e:[], d:2},
+    {n:"Fentes marchées", p:"squat", e:[], d:1},
+    {n:"Squat bulgare (banc)", p:"squat", e:["bench"], d:3},
+    {n:"Squat goblet haltère", p:"squat", e:["dumbbell"], d:2},
+    {n:"Fentes haltères", p:"squat", e:["dumbbell"], d:2},
+    {n:"Squat goblet kettlebell", p:"squat", e:["kettlebell"], d:2},
+    {n:"Squat arrière barre", p:"squat", e:["barbell"], d:3},
+    {n:"Front squat barre", p:"squat", e:["barbell"], d:3},
+    {n:"Squat élastique", p:"squat", e:["band"], d:1},
+    {n:"Presse à cuisses (machine)", p:"squat", e:["machine"], d:1},
+    {n:"Extension jambes (machine)", p:"squat", e:["machine"], d:1},
 
     // CORE
-    {n:"Planche", p:"core", e:[]},
-    {n:"Planche latérale", p:"core", e:[]},
-    {n:"Mountain climbers", p:"core", e:[]},
-    {n:"Crunch vélo", p:"core", e:[]},
-    {n:"Relevé de jambes", p:"core", e:[]},
-    {n:"Dead bug", p:"core", e:[]},
-    {n:"Russian twist haltère", p:"core", e:["dumbbell"]},
-    {n:"Russian twist kettlebell", p:"core", e:["kettlebell"]},
-    {n:"Gainage lesté", p:"core", e:["dumbbell"]},
-    {n:"Pallof press élastique", p:"core", e:["band"]},
-    {n:"Pallof press poulie", p:"core", e:["cable"]}
+    {n:"Planche", p:"core", e:[], d:1},
+    {n:"Planche latérale", p:"core", e:[], d:1},
+    {n:"Mountain climbers", p:"core", e:[], d:1},
+    {n:"Crunch vélo", p:"core", e:[], d:1},
+    {n:"Relevé de jambes", p:"core", e:[], d:1},
+    {n:"Dead bug", p:"core", e:[], d:1},
+    {n:"Russian twist haltère", p:"core", e:["dumbbell"], d:2},
+    {n:"Russian twist kettlebell", p:"core", e:["kettlebell"], d:2},
+    {n:"Gainage lesté", p:"core", e:["dumbbell"], d:2},
+    {n:"Pallof press élastique", p:"core", e:["band"], d:1},
+    {n:"Pallof press poulie", p:"core", e:["cable"], d:2}
   ];
 
   var state = {
     equipment: new Set(["bodyweight","dumbbell","bench"]),
     zone: "full",
     duration: 45,
-    restSeconds: 120
+    restSeconds: 120,
+    difficulty: "intermediate",
+    excluded: new Set()
   };
 
   try {
@@ -841,6 +1072,12 @@
     if (saved && typeof saved.restSeconds === "number") {
       state.restSeconds = Math.min(180, Math.max(60, saved.restSeconds));
     }
+    if (saved && ["beginner","intermediate","advanced"].indexOf(saved.difficulty) !== -1) {
+      state.difficulty = saved.difficulty;
+    }
+    if (saved && Array.isArray(saved.excluded)) {
+      state.excluded = new Set(saved.excluded);
+    }
   } catch (err) {}
 
   function persist(){
@@ -849,9 +1086,36 @@
         equipment: Array.from(state.equipment),
         zone: state.zone,
         duration: state.duration,
-        restSeconds: state.restSeconds
+        restSeconds: state.restSeconds,
+        difficulty: state.difficulty,
+        excluded: Array.from(state.excluded)
       }));
     } catch (err) {}
+  }
+
+  // ---------- session history (localStorage) ----------
+  function loadHistory(){
+    try { return JSON.parse(localStorage.getItem("shaker.history") || "[]"); }
+    catch (err) { return []; }
+  }
+  function saveHistoryRecord(record){
+    var hist = loadHistory();
+    hist.unshift(record);
+    if (hist.length > 30) hist = hist.slice(0, 30);
+    try { localStorage.setItem("shaker.history", JSON.stringify(hist)); } catch (err) {}
+    return hist;
+  }
+  function clearHistory(){
+    try { localStorage.removeItem("shaker.history"); } catch (err) {}
+  }
+  // names used in the most recent saved session, so generate() can steer
+  // away from repeating them right away and vary the mix week to week
+  function recentExerciseNames(){
+    var hist = loadHistory();
+    if (!hist.length) return new Set();
+    var names = new Set();
+    hist[0].exercises.forEach(function(ex){ names.add(ex.name); });
+    return names;
   }
 
   // ---------- theme ----------
@@ -903,6 +1167,106 @@
     });
   }
 
+  // ---------- excluded exercises (injuries / preferences) ----------
+  var excludeToggleBtn = document.getElementById("excludeToggleBtn");
+  var excludePanel = document.getElementById("excludePanel");
+  var excludeSummary = document.getElementById("excludeSummary");
+  var excludePanelBuilt = false;
+
+  function buildExcludePanel(){
+    if (excludePanelBuilt) return;
+    excludePanelBuilt = true;
+    Object.keys(PATTERN_META).forEach(function(pattern){
+      var group = document.createElement("div");
+      var title = document.createElement("div");
+      title.className = "exclude-group-title";
+      title.textContent = PATTERN_META[pattern].label;
+      group.appendChild(title);
+      EXERCISES.filter(function(x){ return x.p === pattern; }).forEach(function(ex){
+        var label = document.createElement("label");
+        label.className = "exclude-item";
+        var checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+        checkbox.checked = !state.excluded.has(ex.n);
+        checkbox.addEventListener("change", function(){
+          if (checkbox.checked) state.excluded.delete(ex.n);
+          else state.excluded.add(ex.n);
+          label.classList.toggle("excluded", !checkbox.checked);
+          syncExcludeSummary();
+          persist();
+        });
+        var span = document.createElement("span");
+        span.textContent = ex.n;
+        label.appendChild(checkbox);
+        label.appendChild(span);
+        label.classList.toggle("excluded", !checkbox.checked);
+        group.appendChild(label);
+      });
+      excludePanel.appendChild(group);
+    });
+  }
+
+  function syncExcludeSummary(){
+    var n = state.excluded.size;
+    excludeSummary.textContent = n === 0
+      ? "Aucun exercice exclu."
+      : n + " exercice" + (n > 1 ? "s" : "") + " exclu" + (n > 1 ? "s" : "") + " de la génération.";
+  }
+
+  excludeToggleBtn.addEventListener("click", function(){
+    buildExcludePanel();
+    var willShow = excludePanel.classList.contains("hidden");
+    excludePanel.classList.toggle("hidden", !willShow);
+    excludeToggleBtn.textContent = willShow ? "Fermer" : "Gérer";
+  });
+
+  syncExcludeSummary();
+
+  // ---------- history view ----------
+  var historyToggleBtn = document.getElementById("historyToggleBtn");
+  var historySection = document.getElementById("historySection");
+  var historyList = document.getElementById("historyList");
+  var historyClearBtn = document.getElementById("historyClearBtn");
+
+  function renderHistory(){
+    var hist = loadHistory();
+    historyList.innerHTML = "";
+    if (!hist.length) {
+      historyList.innerHTML = '<p class="history-empty">Aucune séance enregistrée pour le moment. Termine une séance pour qu\'elle apparaisse ici.</p>';
+      return;
+    }
+    hist.forEach(function(rec){
+      var d = new Date(rec.date);
+      var dateLabel = isNaN(d.getTime()) ? "" : d.toLocaleDateString("fr-FR", {day:"2-digit", month:"short", year:"numeric"}) + " · " + d.toLocaleTimeString("fr-FR", {hour:"2-digit", minute:"2-digit"});
+      var zoneLabel = ZONE_LABELS[rec.zone] || rec.zone;
+      var exList = (rec.exercises || []).map(function(ex){
+        var loggedWeights = (ex.weights || []).filter(function(w){ return w != null; });
+        var weightsText = loggedWeights.length ? " (" + loggedWeights.map(function(w){ return w + "kg"; }).join(", ") + ")" : "";
+        return ex.name + weightsText;
+      }).join(" · ");
+      var card = document.createElement("div");
+      card.className = "history-item";
+      card.innerHTML =
+        '<div class="history-date">' + dateLabel + '</div>' +
+        '<div class="history-meta">' + zoneLabel + ' · ' + rec.duration + ' min</div>' +
+        '<div class="history-exercises">' + exList + '</div>';
+      historyList.appendChild(card);
+    });
+  }
+
+  historyToggleBtn.addEventListener("click", function(){
+    var willShow = historySection.classList.contains("hidden");
+    if (willShow) renderHistory();
+    historySection.classList.toggle("hidden", !willShow);
+    historyToggleBtn.classList.toggle("active", willShow);
+    if (willShow) historySection.scrollIntoView({behavior:"smooth", block:"nearest"});
+  });
+
+  historyClearBtn.addEventListener("click", function(){
+    clearHistory();
+    renderHistory();
+  });
+
   var zoneGrid = document.getElementById("zoneGrid");
   ZONE_OPTIONS.forEach(function(opt){
     var btn = document.createElement("button");
@@ -921,6 +1285,27 @@
   function syncZoneUI(){
     Array.prototype.forEach.call(zoneGrid.children, function(btn){
       btn.classList.toggle("active", btn.dataset.id === state.zone);
+    });
+  }
+
+  var difficultyGrid = document.getElementById("difficultyGrid");
+  DIFFICULTY_OPTIONS.forEach(function(opt){
+    var btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "seg-btn";
+    btn.dataset.id = opt.id;
+    btn.textContent = opt.label;
+    btn.addEventListener("click", function(){
+      state.difficulty = opt.id;
+      syncDifficultyUI();
+      persist();
+    });
+    difficultyGrid.appendChild(btn);
+  });
+
+  function syncDifficultyUI(){
+    Array.prototype.forEach.call(difficultyGrid.children, function(btn){
+      btn.classList.toggle("active", btn.dataset.id === state.difficulty);
     });
   }
 
@@ -976,6 +1361,7 @@
 
   syncEquipmentUI();
   syncZoneUI();
+  syncDifficultyUI();
   syncDurationUI();
   syncRestUI();
 
@@ -1012,14 +1398,30 @@
     return [["squat","hinge"],["push","pull"]];
   }
 
-  function pickExercise(pattern, equipmentSet, usedNames){
-    function matches(x, allowRepeat){
+  // Difficulty gates the exercise pool by a rough per-exercise tier (1 =
+  // simplest setup/skill demand, 3 = heaviest/most technical, auto-tagged
+  // from equipment + movement complexity) and shifts the rep range: more
+  // reps at lighter relative load for beginners, fewer/heavier for advanced.
+  var DIFFICULTY_MAX_TIER = { beginner: 1, intermediate: 2, advanced: 3 };
+  var DIFFICULTY_REPS = { beginner: "10–15", intermediate: "8–12", advanced: "6–10" };
+
+  function repsLabel(pattern){
+    return pattern === "core" ? "30–45 s" : (DIFFICULTY_REPS[state.difficulty] || "8–12");
+  }
+
+  function pickExercise(pattern, equipmentSet, usedNames, avoidNames){
+    var maxTier = DIFFICULTY_MAX_TIER[state.difficulty] || 3;
+    function baseMatch(x){
       if (x.p !== pattern) return false;
-      if (!allowRepeat && usedNames.has(x.n)) return false;
+      if (state.excluded.has(x.n)) return false;
       return x.e.every(function(eq){ return equipmentSet.has(eq); });
     }
-    var pool = EXERCISES.filter(function(x){ return matches(x, false); });
-    if (!pool.length) pool = EXERCISES.filter(function(x){ return matches(x, true); });
+    var pool = EXERCISES.filter(function(x){
+      return baseMatch(x) && x.d <= maxTier && !usedNames.has(x.n) && !(avoidNames && avoidNames.has(x.n));
+    });
+    if (!pool.length) pool = EXERCISES.filter(function(x){ return baseMatch(x) && x.d <= maxTier && !usedNames.has(x.n); });
+    if (!pool.length) pool = EXERCISES.filter(function(x){ return baseMatch(x) && !usedNames.has(x.n); });
+    if (!pool.length) pool = EXERCISES.filter(function(x){ return baseMatch(x); });
     if (!pool.length) pool = EXERCISES.filter(function(x){ return x.p === pattern; });
     var pick = pool[Math.floor(Math.random() * pool.length)];
     usedNames.add(pick.n);
@@ -1027,8 +1429,7 @@
   }
 
   function schemeFor(pattern, sets){
-    if (pattern === "core") return sets + " × 30–45 s · repos " + getRest(pattern) + " s";
-    return sets + " × 8–12 · repos " + getRest(pattern) + " s";
+    return sets + " × " + repsLabel(pattern) + " · repos " + getRest(pattern) + " s";
   }
 
   var coverageRow = document.getElementById("coverageRow");
@@ -1037,6 +1438,7 @@
   var coherenceNote = document.getElementById("coherenceNote");
   var resultsSection = document.getElementById("results");
   var currentSessionSteps = [];
+  var currentItems = [];
 
   var ZONE_NOTE = {
     full: "Séance équilibrée en supersets antagonistes : squat/hinge puis push/pull, gainage en finisher.",
@@ -1053,6 +1455,7 @@
     var mainBudget = Math.max(state.duration - 8, 1);
     var pairs = compoundPairsForZone(state.zone);
     var usedNames = new Set();
+    var avoidNames = recentExerciseNames(); // steer away from last session's picks first
     var items = [];
     var remaining = mainBudget;
 
@@ -1067,12 +1470,12 @@
       for (var p = 0; p < pairs.length; p++){
         if (remaining < pairCost) continue;
         var pair = pairs[p];
-        var exA = pickExercise(pair[0], equipmentSet, usedNames);
-        var exB = pickExercise(pair[1], equipmentSet, usedNames);
+        var exA = pickExercise(pair[0], equipmentSet, usedNames, avoidNames);
+        var exB = pickExercise(pair[1], equipmentSet, usedNames, avoidNames);
         items.push({
           pattern: pair[0],
           name: exA.n,
-          scheme: sets + " × 8–12 · repos " + transitionRest + " s (enchaîné)",
+          scheme: sets + " × " + repsLabel(pair[0]) + " · repos " + transitionRest + " s (enchaîné)",
           minutes: sets * (40 + transitionRest) / 60,
           pairNote: "⇄ Superset avec " + PATTERN_META[pair[1]].label,
           sets: sets,
@@ -1082,7 +1485,7 @@
         items.push({
           pattern: pair[1],
           name: exB.n,
-          scheme: sets + " × 8–12 · repos " + mainRest + " s",
+          scheme: sets + " × " + repsLabel(pair[1]) + " · repos " + mainRest + " s",
           minutes: sets * (40 + mainRest) / 60,
           pairNote: "⇄ Superset avec " + PATTERN_META[pair[0]].label,
           sets: sets,
@@ -1098,7 +1501,7 @@
     if (items.length === 0){
       // budget too tight for even one full superset pair — fall back to a single exercise
       var soloPattern = pairs[0][0];
-      var exSolo = pickExercise(soloPattern, equipmentSet, usedNames);
+      var exSolo = pickExercise(soloPattern, equipmentSet, usedNames, avoidNames);
       items.push({
         pattern: soloPattern,
         name: exSolo.n,
@@ -1114,7 +1517,7 @@
 
     var coreCost = estimateExerciseMinutes("core", sets);
     if (remaining >= coreCost){
-      var exCore = pickExercise("core", equipmentSet, usedNames);
+      var exCore = pickExercise("core", equipmentSet, usedNames, avoidNames);
       items.push({
         pattern: "core",
         name: exCore.n,
@@ -1131,6 +1534,7 @@
   }
 
   function renderResults(items, sets){
+    currentItems = items;
     // coverage pills
     var seenPatterns = [];
     items.forEach(function(it){
@@ -1155,12 +1559,12 @@
       pattern: null,
       name: "Échauffement",
       scheme: "5 min · mobilité générale + activation",
-      pairNote: null
+      pairNote: null,
+      restSeconds: 0
     });
 
     function setScheme(it, setIndex, setCount){
-      var reps = it.pattern === "core" ? "30–45 s" : "8–12";
-      return "Série " + setIndex + " / " + setCount + " · " + reps + " · repos " + it.restSeconds + " s" + (it.restLabel || "");
+      return "Série " + setIndex + " / " + setCount + " · " + repsLabel(it.pattern) + " · repos " + it.restSeconds + " s" + (it.restLabel || "");
     }
 
     var idx = 0;
@@ -1176,14 +1580,16 @@
             pattern: itA.pattern,
             name: itA.name,
             scheme: setScheme(itA, s, setCount),
-            pairNote: itA.pairNote
+            pairNote: itA.pairNote,
+            restSeconds: itA.restSeconds
           });
           currentSessionSteps.push({
             type: "exercise",
             pattern: itB.pattern,
             name: itB.name,
             scheme: setScheme(itB, s, setCount),
-            pairNote: itB.pairNote
+            pairNote: itB.pairNote,
+            restSeconds: itB.restSeconds
           });
         }
         idx += 2;
@@ -1195,7 +1601,8 @@
             pattern: itA.pattern,
             name: itA.name,
             scheme: setScheme(itA, s2, setCountSolo),
-            pairNote: itA.pairNote
+            pairNote: itA.pairNote,
+            restSeconds: itA.restSeconds
           });
         }
         idx += 1;
@@ -1207,7 +1614,8 @@
       pattern: null,
       name: "Retour au calme",
       scheme: "3 min · étirements",
-      pairNote: null
+      pairNote: null,
+      restSeconds: 0
     });
 
     // session list
@@ -1267,16 +1675,27 @@
   var playerName = document.getElementById("playerName");
   var playerScheme = document.getElementById("playerScheme");
   var playerPairnote = document.getElementById("playerPairnote");
+  var playerWeightRow = document.getElementById("playerWeightRow");
+  var playerWeight = document.getElementById("playerWeight");
+  var playerSwapBtn = document.getElementById("playerSwapBtn");
+  var playerRest = document.getElementById("playerRest");
+  var playerRestCount = document.getElementById("playerRestCount");
+  var playerRestNext = document.getElementById("playerRestNext");
+  var playerSkipRestBtn = document.getElementById("playerSkipRestBtn");
   var playerValidateBtn = document.getElementById("playerValidateBtn");
   var playerQuitBtn = document.getElementById("playerQuitBtn");
   var playerDone = document.getElementById("playerDone");
   var playerCloseBtn = document.getElementById("playerCloseBtn");
 
   var playerIndex = 0;
+  var sessionLog = []; // {pattern, name, weight} pushed in validation order, for history
+  var restTimerId = null;
+  var restTargetIndex = null;
 
   function showPlayerStep(){
     var step = currentSessionSteps[playerIndex];
     playerDone.style.display = "none";
+    playerRest.classList.add("hidden");
     playerStep.style.display = "";
     playerValidateBtn.style.display = "";
 
@@ -1298,32 +1717,156 @@
     playerPairnote.textContent = step.pairNote || "";
     playerPairnote.style.display = step.pairNote ? "block" : "none";
 
+    if (step.type === "exercise") {
+      playerWeightRow.style.display = "";
+      playerSwapBtn.style.display = "";
+      var lastWeight = null;
+      for (var i = sessionLog.length - 1; i >= 0; i--){
+        if (sessionLog[i].name === step.name && sessionLog[i].weight != null) { lastWeight = sessionLog[i].weight; break; }
+      }
+      playerWeight.value = lastWeight != null ? lastWeight : "";
+    } else {
+      playerWeightRow.style.display = "none";
+      playerSwapBtn.style.display = "none";
+    }
+
     playerValidateBtn.textContent = (playerIndex === currentSessionSteps.length - 1) ? "✓ Terminer" : "✓ Valider";
   }
+
+  // ----- rest countdown between sets, with sound + vibration at the end -----
+  function clearRestTimer(){
+    if (restTimerId) { clearInterval(restTimerId); restTimerId = null; }
+  }
+
+  function startRest(seconds, targetIndex){
+    restTargetIndex = targetIndex;
+    var remaining = seconds;
+    playerStep.style.display = "none";
+    playerValidateBtn.style.display = "none";
+    playerRest.classList.remove("hidden");
+    var nextStep = currentSessionSteps[targetIndex];
+    playerRestNext.textContent = nextStep ? ("Ensuite : " + nextStep.name) : "";
+    playerRestCount.textContent = remaining;
+    clearRestTimer();
+    restTimerId = setInterval(function(){
+      remaining--;
+      if (remaining <= 0){
+        clearRestTimer();
+        if (navigator.vibrate) navigator.vibrate([40, 30, 40]);
+        playRestEndSound();
+        finishRest();
+        return;
+      }
+      playerRestCount.textContent = remaining;
+    }, 1000);
+  }
+
+  function finishRest(){
+    clearRestTimer();
+    playerRest.classList.add("hidden");
+    if (restTargetIndex != null) {
+      playerIndex = restTargetIndex;
+      restTargetIndex = null;
+      showPlayerStep();
+    }
+  }
+
+  playerSkipRestBtn.addEventListener("click", finishRest);
+
+  // ----- swap the current exercise for another of the same pattern -----
+  function swapCurrentExercise(){
+    var step = currentSessionSteps[playerIndex];
+    if (step.type !== "exercise") return;
+    var equipmentSet = state.equipment.size ? state.equipment : new Set(["bodyweight"]);
+    var usedNames = new Set();
+    currentSessionSteps.forEach(function(s){ if (s.type === "exercise") usedNames.add(s.name); });
+    usedNames.delete(step.name);
+    var maxTier = DIFFICULTY_MAX_TIER[state.difficulty] || 3;
+    function baseMatch(x){
+      if (x.p !== step.pattern) return false;
+      if (x.n === step.name) return false;
+      if (state.excluded.has(x.n)) return false;
+      return x.e.every(function(eq){ return equipmentSet.has(eq); });
+    }
+    var pool = EXERCISES.filter(function(x){ return baseMatch(x) && x.d <= maxTier && !usedNames.has(x.n); });
+    if (!pool.length) pool = EXERCISES.filter(function(x){ return baseMatch(x) && !usedNames.has(x.n); });
+    if (!pool.length) pool = EXERCISES.filter(function(x){ return baseMatch(x); });
+    if (!pool.length) return; // nothing else available for this pattern/equipment
+    var pick = pool[Math.floor(Math.random() * pool.length)];
+    var oldName = step.name;
+    // swap this and every remaining set of the same exercise, not just this one set
+    for (var i = playerIndex; i < currentSessionSteps.length; i++){
+      var s2 = currentSessionSteps[i];
+      if (s2.type === "exercise" && s2.pattern === step.pattern && s2.name === oldName) {
+        s2.name = pick.n;
+      }
+    }
+    showPlayerStep();
+  }
+
+  playerSwapBtn.addEventListener("click", swapCurrentExercise);
 
   function startSession(){
     if (!currentSessionSteps.length) return;
     playerIndex = 0;
+    sessionLog = [];
+    clearRestTimer();
     resultsSection.classList.add("hidden");
     playerSection.classList.remove("hidden");
     showPlayerStep();
   }
 
+  function saveCompletedSession(){
+    if (!sessionLog.length) return;
+    var byName = {};
+    var order = [];
+    sessionLog.forEach(function(e){
+      if (!byName[e.name]) { byName[e.name] = { pattern: e.pattern, name: e.name, weights: [] }; order.push(e.name); }
+      byName[e.name].weights.push(e.weight);
+    });
+    var record = {
+      date: new Date().toISOString(),
+      zone: state.zone,
+      difficulty: state.difficulty,
+      duration: state.duration,
+      exercises: order.map(function(n){ return byName[n]; })
+    };
+    saveHistoryRecord(record);
+    if (typeof renderHistory === "function") renderHistory();
+  }
+
   function validateStep(){
+    var step = currentSessionSteps[playerIndex];
     if (navigator.vibrate) navigator.vibrate(30);
+
+    if (step.type === "exercise") {
+      var raw = playerWeight.value;
+      var w = raw !== "" ? parseFloat(raw) : NaN;
+      sessionLog.push({ pattern: step.pattern, name: step.name, weight: isNaN(w) ? null : w });
+    }
+
     if (playerIndex >= currentSessionSteps.length - 1) {
       playerStep.style.display = "none";
+      playerRest.classList.add("hidden");
       playerValidateBtn.style.display = "none";
       playerBarFill.style.width = "100%";
       playerProgress.textContent = "Étape " + currentSessionSteps.length + " / " + currentSessionSteps.length;
       playerDone.style.display = "";
+      saveCompletedSession();
       return;
     }
-    playerIndex++;
-    showPlayerStep();
+
+    var nextIndex = playerIndex + 1;
+    if (step.restSeconds && step.restSeconds > 0) {
+      startRest(step.restSeconds, nextIndex);
+    } else {
+      playerIndex = nextIndex;
+      showPlayerStep();
+    }
   }
 
   function quitSession(){
+    clearRestTimer();
     playerSection.classList.add("hidden");
     resultsSection.classList.remove("hidden");
   }
@@ -1332,6 +1875,60 @@
   playerValidateBtn.addEventListener("click", validateStep);
   playerQuitBtn.addEventListener("click", quitSession);
   playerCloseBtn.addEventListener("click", quitSession);
+
+  // ---------- share a generated session (coach → client) ----------
+  var shareSessionBtn = document.getElementById("shareSessionBtn");
+  var shareFeedback = document.getElementById("shareFeedback");
+
+  function buildShareText(){
+    var lines = [];
+    lines.push("Séance Shaker — " + ZONE_LABELS[state.zone] + " · " + state.duration + " min");
+    lines.push("");
+    lines.push("1. Échauffement — 5 min mobilité générale + activation");
+    currentItems.forEach(function(it, i){
+      var meta = PATTERN_META[it.pattern];
+      lines.push((i + 2) + ". [" + meta.label + "] " + it.name + " — " + it.scheme + (it.pairNote ? " (" + it.pairNote + ")" : ""));
+    });
+    lines.push((currentItems.length + 2) + ". Retour au calme — 3 min étirements");
+    return lines.join("\n");
+  }
+
+  function flashShareFeedback(text){
+    shareFeedback.textContent = text;
+    shareFeedback.classList.remove("hidden");
+    setTimeout(function(){ shareFeedback.classList.add("hidden"); }, 2200);
+  }
+
+  shareSessionBtn.addEventListener("click", function(){
+    var text = buildShareText();
+    if (navigator.share) {
+      navigator.share({ title: "Séance Shaker", text: text }).catch(function(){});
+      return;
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function(){
+        flashShareFeedback("Copié dans le presse-papiers ✓");
+      }).catch(function(){
+        flashShareFeedback("Impossible de copier automatiquement");
+      });
+      return;
+    }
+    // last-resort fallback for older browsers without the Clipboard API
+    try {
+      var ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      document.execCommand("copy");
+      document.body.removeChild(ta);
+      flashShareFeedback("Copié dans le presse-papiers ✓");
+    } catch (err) {
+      flashShareFeedback("Impossible de copier automatiquement");
+    }
+  });
 
   // ---------- shake feedback: vibration + sound + wiggle ----------
   var audioCtx = null;
@@ -1387,6 +1984,25 @@
       noise.start(t0);
       noise.stop(t0 + duration);
     }
+  }
+
+  function playRestEndSound(){
+    var ctx = getAudioCtx();
+    if (!ctx) return;
+    var now = ctx.currentTime;
+    [0, 0.16].forEach(function(offset, i){
+      var osc = ctx.createOscillator();
+      var gain = ctx.createGain();
+      osc.type = "sine";
+      osc.frequency.value = i === 0 ? 880 : 1175;
+      gain.gain.setValueAtTime(0, now + offset);
+      gain.gain.linearRampToValueAtTime(0.28, now + offset + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + offset + 0.2);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now + offset);
+      osc.stop(now + offset + 0.22);
+    });
   }
 
   function triggerShakeFX(){
