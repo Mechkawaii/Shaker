@@ -750,6 +750,12 @@
     align-items:flex-start;
   }
   .session-item:first-child{border-top:none;}
+  .session-item.paired{
+    background: color-mix(in srgb, var(--accent) 7%, transparent);
+  }
+  .session-item.paired + .session-item.paired{
+    border-top: 1px dashed var(--line);
+  }
   .idx{
     font-family:var(--font-display);
     font-size:20px;
@@ -893,6 +899,18 @@
     <input type="range" id="restRange" min="60" max="180" step="15" value="120" aria-label="Repos entre séries en secondes">
   </section>
 
+  <section class="card">
+    <div class="card-label">
+      <span id="transitionLabelText">Pause enchaînement (superset)</span>
+    </div>
+    <div class="duration-row">
+      <button class="stepper" id="transitionMinus" type="button" aria-label="Réduire la pause d'enchaînement">–</button>
+      <div class="duration-readout" id="transitionReadout">20<small id="transitionUnit">secondes</small></div>
+      <button class="stepper" id="transitionPlus" type="button" aria-label="Augmenter la pause d'enchaînement">+</button>
+    </div>
+    <input type="range" id="transitionRange" min="10" max="45" step="5" value="20" aria-label="Pause d'enchaînement en secondes">
+  </section>
+
   <div class="cta-wrap">
     <button id="checkBtn" type="button">
       <img class="check-logo" src="/logo.png" alt="" aria-hidden="true">
@@ -970,6 +988,7 @@
       durationLabel: "Durée",
       minutesUnit: "minutes",
       restLabel: "Repos entre séries",
+      transitionRestLabel: "Pause enchaînement (superset)",
       secondsUnit: "secondes",
       shakeSmall: "Générer la séance",
       shakeHint: "Secouez votre téléphone pour générer une nouvelle séance à tout moment.",
@@ -980,9 +999,9 @@
       stepProgress: function(i, total){ return "Étape " + i + " / " + total; },
       estimateText: function(mins, requested){ return "≈ " + mins + " min estimées (" + requested + " min demandées)"; },
       coherenceShort: function(labels){ return "Séance courte : " + labels + ". Choisis plus de temps pour couvrir tous les patterns."; },
-      zoneNoteFull: "Séance équilibrée en supersets antagonistes : squat/hinge puis push/pull, gainage en finisher.",
-      zoneNoteUpper: "Focus haut du corps en superset antagoniste push/pull, fini par le gainage.",
-      zoneNoteLower: "Focus bas du corps en superset antagoniste squat/hinge, fini par le gainage.",
+      zoneNoteFull: "Séance équilibrée en patterns antagonistes : squat/hinge puis push/pull, parfois enchaînés en superset, gainage en finisher.",
+      zoneNoteUpper: "Focus haut du corps en patterns antagonistes push/pull, parfois enchaînés en superset, fini par le gainage.",
+      zoneNoteLower: "Focus bas du corps en patterns antagonistes squat/hinge, parfois enchaînés en superset, fini par le gainage.",
       startSessionBtn: "Démarrer la séance",
       shareSessionBtn: "Partager cette séance",
       shareCopied: "Copié dans le presse-papiers ✓",
@@ -1029,6 +1048,7 @@
       durationLabel: "Duration",
       minutesUnit: "minutes",
       restLabel: "Rest between sets",
+      transitionRestLabel: "Switch pause (superset)",
       secondsUnit: "seconds",
       shakeSmall: "Generate workout",
       shakeHint: "Shake your phone to generate a new workout anytime.",
@@ -1039,9 +1059,9 @@
       stepProgress: function(i, total){ return "Step " + i + " / " + total; },
       estimateText: function(mins, requested){ return "≈ " + mins + " min estimated (" + requested + " min requested)"; },
       coherenceShort: function(labels){ return "Short session: " + labels + ". Choose more time to cover all patterns."; },
-      zoneNoteFull: "Balanced session in antagonist supersets: squat/hinge then push/pull, core to finish.",
-      zoneNoteUpper: "Upper body focus in a push/pull antagonist superset, finished with core.",
-      zoneNoteLower: "Lower body focus in a squat/hinge antagonist superset, finished with core.",
+      zoneNoteFull: "Balanced session in antagonist patterns: squat/hinge then push/pull, sometimes paired as supersets, core to finish.",
+      zoneNoteUpper: "Upper body focus in antagonist push/pull patterns, sometimes paired as a superset, finished with core.",
+      zoneNoteLower: "Lower body focus in antagonist squat/hinge patterns, sometimes paired as a superset, finished with core.",
       startSessionBtn: "Start workout",
       shareSessionBtn: "Share this workout",
       shareCopied: "Copied to clipboard ✓",
@@ -1208,6 +1228,7 @@
     zone: "full",
     duration: 45,
     restSeconds: 120,
+    transitionRest: 20,
     difficulty: "intermediate",
     excluded: new Set(),
     lang: "fr"
@@ -1227,6 +1248,9 @@
     if (saved && typeof saved.restSeconds === "number") {
       state.restSeconds = Math.min(180, Math.max(60, saved.restSeconds));
     }
+    if (saved && typeof saved.transitionRest === "number") {
+      state.transitionRest = Math.min(45, Math.max(10, saved.transitionRest));
+    }
     if (saved && ["beginner","intermediate","advanced"].indexOf(saved.difficulty) !== -1) {
       state.difficulty = saved.difficulty;
     }
@@ -1245,6 +1269,7 @@
         zone: state.zone,
         duration: state.duration,
         restSeconds: state.restSeconds,
+        transitionRest: state.transitionRest,
         difficulty: state.difficulty,
         excluded: Array.from(state.excluded),
         lang: state.lang
@@ -1516,11 +1541,37 @@
     persist();
   });
 
+  var transitionRange = document.getElementById("transitionRange");
+  var transitionReadout = document.getElementById("transitionReadout");
+  transitionRange.value = state.transitionRest;
+
+  function syncTransitionUI(){
+    transitionRange.value = state.transitionRest;
+    transitionReadout.innerHTML = state.transitionRest + '<small id="transitionUnit">' + T().secondsUnit + '</small>';
+  }
+
+  transitionRange.addEventListener("input", function(){
+    state.transitionRest = parseInt(transitionRange.value, 10);
+    syncTransitionUI();
+    persist();
+  });
+  document.getElementById("transitionMinus").addEventListener("click", function(){
+    state.transitionRest = Math.max(10, state.transitionRest - 5);
+    syncTransitionUI();
+    persist();
+  });
+  document.getElementById("transitionPlus").addEventListener("click", function(){
+    state.transitionRest = Math.min(45, state.transitionRest + 5);
+    syncTransitionUI();
+    persist();
+  });
+
   syncEquipmentUI();
   syncZoneUI();
   syncDifficultyUI();
   syncDurationUI();
   syncRestUI();
+  syncTransitionUI();
 
   // ---------- language toggle ----------
   var langToggle = document.getElementById("lang-toggle");
@@ -1544,8 +1595,10 @@
     document.getElementById("levelLabelText").textContent = T().levelLabel;
     document.getElementById("durationLabelText").textContent = T().durationLabel;
     document.getElementById("restLabelText").textContent = T().restLabel;
+    document.getElementById("transitionLabelText").textContent = T().transitionRestLabel;
     syncDurationUI();
     syncRestUI();
+    syncTransitionUI();
     document.getElementById("shakeSmallText").textContent = T().shakeSmall;
     document.getElementById("shakeHintText").textContent = T().shakeHint;
     document.getElementById("shakeEnableBtn").textContent = T().shakeEnable;
@@ -1691,8 +1744,8 @@
     return sets + " × " + repsLabel(pattern) + " · " + T().restWord + " " + restSeconds + " s" + suffix;
   }
 
-  function pairNoteFor(otherPattern){
-    return otherPattern ? (T().supersetWith + " " + PATTERN_META[otherPattern].label) : null;
+  function pairNoteFor(partnerNameKey){
+    return partnerNameKey ? (T().supersetWith + " " + displayName(partnerNameKey)) : null;
   }
 
   var coverageRow = document.getElementById("coverageRow");
@@ -1714,7 +1767,7 @@
     var equipmentSet = state.equipment.size ? state.equipment : new Set(["bodyweight"]);
     var sets = computeSets(state.duration);
     var mainRest = state.restSeconds;
-    var transitionRest = 20; // quick switch between the two sides of a superset pair
+    var transitionRest = state.transitionRest; // quick switch between the two sides of a superset pair
     var mainBudget = Math.max(state.duration - 8, 1);
     var pairs = compoundPairsForZone(state.zone);
     var usedNames = new Set();
@@ -1724,36 +1777,79 @@
 
     // keep looping through the zone's antagonist pairs (adding a fresh
     // exercise each time, since usedNames blocks repeats) until the time
-    // budget runs out, instead of stopping after a single pass — a long
-    // session should actually use its time rather than leave it idle
-    var pairCost = sets * (40 + transitionRest + 40 + mainRest) / 60;
-    var maxLaps = 3;
-    for (var lap = 0; lap < maxLaps; lap++){
+    // budget genuinely runs out — a long session, including a single-pair
+    // zone like "upper" or "lower", should actually use its time rather
+    // than stop after an arbitrary number of rounds. safetyLaps is just a
+    // sanity bound (a real time budget never gets remotely close to it).
+    //
+    // supersets (alternating A/B with a quick transition) aren't the only
+    // way to run an antagonist pair — each time one is added, there's a
+    // chance it's done as straight sets instead (all of A's sets, full
+    // rest, then all of B's), which also costs more time since neither
+    // side gets the short "enchaîné" transition.
+    var SUPERSET_CHANCE = 0.55;
+    var supersetPairCost = sets * (40 + transitionRest + 40 + mainRest) / 60;
+    var straightPairCost = sets * (40 + mainRest) * 2 / 60;
+    var safetyLaps = 20;
+    for (var lap = 0; lap < safetyLaps; lap++){
       var addedThisLap = false;
       for (var p = 0; p < pairs.length; p++){
-        if (remaining < pairCost) continue;
         var pair = pairs[p];
+        var wantSuperset = Math.random() < SUPERSET_CHANCE;
+        var cost = wantSuperset ? supersetPairCost : straightPairCost;
+        if (remaining < cost){
+          // the budget doesn't fit the preferred mode this round — fall
+          // back to the cheaper one rather than skipping the pair outright
+          if (wantSuperset && remaining >= straightPairCost){ wantSuperset = false; cost = straightPairCost; }
+          else if (!wantSuperset && remaining >= supersetPairCost){ wantSuperset = true; cost = supersetPairCost; }
+          else continue;
+        }
         var exA = pickExercise(pair[0], equipmentSet, usedNames, avoidNames);
         var exB = pickExercise(pair[1], equipmentSet, usedNames, avoidNames);
-        items.push({
-          pattern: pair[0],
-          name: exA.n,
-          minutes: sets * (40 + transitionRest) / 60,
-          pairPattern: pair[1],
-          sets: sets,
-          restSeconds: transitionRest,
-          restKind: "enchaine"
-        });
-        items.push({
-          pattern: pair[1],
-          name: exB.n,
-          minutes: sets * (40 + mainRest) / 60,
-          pairPattern: pair[0],
-          sets: sets,
-          restSeconds: mainRest,
-          restKind: null
-        });
-        remaining -= pairCost;
+        if (wantSuperset){
+          items.push({
+            pattern: pair[0],
+            name: exA.n,
+            minutes: sets * (40 + transitionRest) / 60,
+            pairPattern: pair[1],
+            pairWithName: exB.n,
+            sets: sets,
+            restSeconds: transitionRest,
+            restKind: "enchaine"
+          });
+          items.push({
+            pattern: pair[1],
+            name: exB.n,
+            minutes: sets * (40 + mainRest) / 60,
+            pairPattern: pair[0],
+            pairWithName: exA.n,
+            sets: sets,
+            restSeconds: mainRest,
+            restKind: null
+          });
+        } else {
+          items.push({
+            pattern: pair[0],
+            name: exA.n,
+            minutes: sets * (40 + mainRest) / 60,
+            pairPattern: null,
+            pairWithName: null,
+            sets: sets,
+            restSeconds: mainRest,
+            restKind: null
+          });
+          items.push({
+            pattern: pair[1],
+            name: exB.n,
+            minutes: sets * (40 + mainRest) / 60,
+            pairPattern: null,
+            pairWithName: null,
+            sets: sets,
+            restSeconds: mainRest,
+            restKind: null
+          });
+        }
+        remaining -= cost;
         addedThisLap = true;
       }
       if (!addedThisLap) break;
@@ -1768,11 +1864,41 @@
         name: exSolo.n,
         minutes: estimateExerciseMinutes(soloPattern, sets),
         pairPattern: null,
+        pairWithName: null,
         sets: sets,
         restSeconds: getRest(soloPattern),
         restKind: null
       });
       remaining -= estimateExerciseMinutes(soloPattern, sets);
+    }
+
+    // a leftover chunk smaller than one more full pair (often several
+    // minutes, especially with a longer "pause enchaînement" or "repos
+    // entre séries") would otherwise just be dropped — use it up with
+    // single bonus exercises (round-robin across the zone's patterns)
+    // instead of quietly undershooting the requested duration.
+    var fillPatterns = compoundsForZone(state.zone);
+    for (var fillLap = 0; fillLap < 10; fillLap++){
+      var addedFiller = false;
+      for (var fp = 0; fp < fillPatterns.length; fp++){
+        var fillPattern = fillPatterns[fp];
+        var soloCost = estimateExerciseMinutes(fillPattern, sets);
+        if (remaining < soloCost) continue;
+        var exFill = pickExercise(fillPattern, equipmentSet, usedNames, avoidNames);
+        items.push({
+          pattern: fillPattern,
+          name: exFill.n,
+          minutes: soloCost,
+          pairPattern: null,
+          pairWithName: null,
+          sets: sets,
+          restSeconds: getRest(fillPattern),
+          restKind: null
+        });
+        remaining -= soloCost;
+        addedFiller = true;
+      }
+      if (!addedFiller) break;
     }
 
     var coreCost = estimateExerciseMinutes("core", sets);
@@ -1783,6 +1909,7 @@
         name: exCore.n,
         minutes: coreCost,
         pairPattern: null,
+        pairWithName: null,
         sets: sets,
         restSeconds: getRest("core"),
         restKind: null
@@ -1823,7 +1950,7 @@
             nameKey: itA.name,
             name: displayName(itA.name),
             scheme: setScheme(itA, s, setCount),
-            pairNote: pairNoteFor(itA.pairPattern),
+            pairNote: pairNoteFor(itA.pairWithName),
             restSeconds: itA.restSeconds
           });
           steps.push({
@@ -1832,7 +1959,7 @@
             nameKey: itB.name,
             name: displayName(itB.name),
             scheme: setScheme(itB, s, setCount),
-            pairNote: pairNoteFor(itB.pairPattern),
+            pairNote: pairNoteFor(itB.pairWithName),
             restSeconds: itB.restSeconds
           });
         }
@@ -1846,7 +1973,7 @@
             nameKey: itA.name,
             name: displayName(itA.name),
             scheme: setScheme(itA, s2, setCountSolo),
-            pairNote: pairNoteFor(itA.pairPattern),
+            pairNote: pairNoteFor(itA.pairWithName),
             restSeconds: itA.restSeconds
           });
         }
@@ -1894,9 +2021,9 @@
       totalMinutes += it.minutes;
       var meta = PATTERN_META[it.pattern];
       var scheme = schemeFor(it.pattern, it.sets || sets, it.restSeconds, it.restKind);
-      var pairNote = pairNoteFor(it.pairPattern);
+      var pairNote = pairNoteFor(it.pairWithName);
       var row = document.createElement("div");
-      row.className = "session-item";
+      row.className = "session-item" + (it.pairWithName ? " paired" : "");
       row.innerHTML =
         '<div class="idx">' + (i + 1) + '</div>' +
         '<div class="item-body">' +
@@ -2074,9 +2201,23 @@
         s2.name = displayName(pick.n);
       }
     }
+    var partnerItem = null;
     currentItems.forEach(function(it){
       if (it.pattern === step.pattern && it.name === oldKey) it.name = pick.n;
+      if (it.pairWithName === oldKey) partnerItem = it;
     });
+    // this exercise is the superset partner of another one — relabel the
+    // partner's "Superset avec …" note too, from here on, so it still
+    // names the exercise actually being done
+    if (partnerItem) {
+      partnerItem.pairWithName = pick.n;
+      for (var j = playerIndex; j < currentSessionSteps.length; j++){
+        var s3 = currentSessionSteps[j];
+        if (s3.type === "exercise" && s3.pattern === partnerItem.pattern && s3.nameKey === partnerItem.name) {
+          s3.pairNote = pairNoteFor(pick.n);
+        }
+      }
+    }
     showPlayerStep();
   }
 
@@ -2164,7 +2305,7 @@
     currentItems.forEach(function(it, i){
       var meta = PATTERN_META[it.pattern];
       var scheme = schemeFor(it.pattern, it.sets || currentSets, it.restSeconds, it.restKind);
-      var pairNote = pairNoteFor(it.pairPattern);
+      var pairNote = pairNoteFor(it.pairWithName);
       lines.push((i + 2) + ". [" + meta.label + "] " + displayName(it.name) + " — " + scheme + (pairNote ? " (" + pairNote + ")" : ""));
     });
     lines.push((currentItems.length + 2) + ". " + T().cooldownName + " — " + T().cooldownScheme);
